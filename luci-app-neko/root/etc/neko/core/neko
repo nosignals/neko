@@ -1,0 +1,195 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 nosignal
+
+neko_dir="/etc/neko"
+neko_tmp_dir="$neko_dir/tmp"
+neko_bin="$neko_dir/core/mihomo"
+neko_www="/www/nekoclash"
+neko_config=`cat $neko_www/lib/selected_config.txt`
+
+php_bin="/usr/bin/php"
+php_address="0.0.0.0"
+php_port="8080"
+
+tun_bin="$neko_dir/core/tun"
+
+neko_log="$neko_tmp_dir/neko_log.txt"
+neko_pid_path="$neko_tmp_dir/neko_pid.txt"
+neko_status=`uci -q get neko.cfg.enabled`
+php_pid_path="$neko_tmp_dir/php_pid.txt"
+log="$neko_dir/tmp/log.txt"
+
+neko_ver(){
+    neko_version="1.0-beta"
+}
+neko_checknewver(){
+    if [ $neko_version == "1.0-beta" ] ; then
+        strversion="- Latest"
+    else
+        strversion="- New Version xxx"
+    fi
+}
+neko_start(){
+    neko_ver
+    neko_checknewver
+    echo "[ `date +%T` ] Starting Neko v.$neko_version $strversion"
+    echo "[ `date +%T` ] Starting Neko v.$neko_version $strversion" >> $log
+    if [ -f $neko_pid_path ] ; then
+        echo "[ `date +%T` ] - Neko is Running..."
+        echo "[ `date +%T` ] - Neko is Running..." >> $log
+        echo "[ `date +%T` ] - Cleaning iptables routing"
+        echo "[ `date +%T` ] - Cleaning iptables routing" >> $log
+        $tun_bin -k > /dev/null
+        echo "[ `date +%T` ] - Killing Neko. PID : `cat $neko_pid_path`"
+        echo "[ `date +%T` ] - Killing Neko. PID : `cat $neko_pid_path`" >> $log
+        kill `cat $neko_pid_path`
+        uci set neko.cfg.enabled='0'
+        uci commit neko
+        rm $neko_pid_path
+        sleep 1
+        echo "[ `date +%T` ] - Retry Starting Neko..."
+        echo "[ `date +%T` ] - Retry Starting Neko..." >> $log
+    else
+        echo "[ `date +%T` ] - Neko not Running..."
+        echo "[ `date +%T` ] - Neko not Running..." >> $log
+    fi
+    if [ -f $neko_bin ] ; then
+        core_version=`$neko_bin -v | head -1 | awk '{print $1 " " $3}'`
+        echo "[ `date +%T` ] - Core Detected : $core_version"
+        echo "[ `date +%T` ] - Core Detected : $core_version" >> $log
+        rm $neko_log
+        $neko_bin -f $neko_config -d $neko_dir >> $neko_log &
+        neko_pid=`pgrep mihomo`
+        echo "[ `date +%T` ] - Neko Started. PID : $neko_pid"
+        echo "[ `date +%T` ] - Neko Started. PID : $neko_pid" >> $log
+        echo "[ `date +%T` ] - Configs : $neko_config"
+        echo "[ `date +%T` ] - Configs : $neko_config" >> $log
+        echo "[ `date +%T` ] - Starting iptables"
+        echo "[ `date +%T` ] - Starting iptables" >> $log
+        echo $neko_pid > $neko_pid_path
+        sleep 1
+        $tun_bin -s > /dev/null
+        uci set neko.cfg.enabled='1'
+        uci commit neko
+    else
+        echo "[ `date +%T` ] - Core not Detected!!!"
+        echo "[ `date +%T` ] - Core not Detected!!!" >> $log
+    fi
+    echo "[ `date +%T` ] Done"
+    echo "[ `date +%T` ] Done" >> $log
+}
+
+php_start(){
+    echo "[ `date +%T` ] Checking PHP Server Status..."
+    echo "[ `date +%T` ] Checking PHP Server Status..." >> $log
+    if [ -f $php_pid_path ] ; then
+        echo "[ `date +%T` ] - PHP Server is Running..."
+        echo "[ `date +%T` ] - PHP Server is Running..." >> $log
+        echo "[ `date +%T` ] - Destroy PHP Server. PID : `cat $php_pid_path`"
+        echo "[ `date +%T` ] - Destroy PHP Server. PID : `cat $php_pid_path`" >> $log
+        kill `cat $php_pid_path`
+        rm $php_pid_path
+    else  
+        echo "[ `date +%T` ] - PHP Server not Running..."
+    fi
+    nohup $php_bin -S $php_address:$php_port -t ${neko_www} > /dev/null 2>&1 &
+    php_pid=`pgrep php`
+    echo "[ `date +%T` ] - PHP Server Started. PID:$php_pid"
+    echo "[ `date +%T` ] - PHP Server Started. PID:$php_pid" >> $log
+    echo "[ `date +%T` ] - PHP Running at $php_address:$php_port"
+    echo "[ `date +%T` ] - PHP Running at $php_address:$php_port" >> $log
+    echo $php_pid > $php_pid_path   
+    echo "[ `date +%T` ] Done"
+    echo "[ `date +%T` ] Done" >> $log
+}
+
+neko_stop(){
+    echo "[ `date +%T` ] Disable Neko"
+    echo "[ `date +%T` ] Disable Neko" > $log
+    $tun_bin -k > /dev/null
+    if [ -f $neko_pid_path ] ; then
+        echo "[ `date +%T` ] - Killing Neko PID : `cat $neko_pid_path`"
+        echo "[ `date +%T` ] - Killing Neko PID : `cat $neko_pid_path`"  >> $log
+        kill `cat $neko_pid_path`
+        rm $neko_pid_path
+        sleep 1
+        echo "[ `date +%T` ] Neko has Disabled"
+        echo "[ `date +%T` ] Neko has Disabled" >> $log
+        echo "[ `date +%T` ] Neko Disabled." > $neko_log
+    else
+        echo "[ `date +%T` ] Neko is not Running"
+        echo "[ `date +%T` ] Neko is not Running"  >> $log
+    fi
+    uci set neko.cfg.enabled='0'
+    uci commit neko
+}
+
+neko_restart(){
+    echo "[ `date +%T` ] Restarting Neko"
+    echo "[ `date +%T` ] Restarting Neko"  > $log
+    neko_start
+    echo "[ `date +%T` ] Restarting Neko - Done"
+    echo "[ `date +%T` ] Restarting Neko - Done"  >> $log
+}
+
+php_stop(){
+    if [ -f $php_pid_path ] ; then
+        echo "[ `date +%T` ] - Killing PHP PID : `cat $php_pid_path`"
+        echo "[ `date +%T` ] - Killing PHP PID : `cat $php_pid_path`"  >> $log
+        kill `cat $php_pid_path`
+        rm $php_pid_path
+        sleep 1
+        echo "[ `date +%T` ] - Done..."
+        echo "[ `date +%T` ] - Done..." >> $log
+    else
+        echo "[ `date +%T` ] - PHP Server Not Running"
+        echo "[ `date +%T` ] - PHP Server Not Running"  >> $log
+    fi
+}
+
+cleanup(){
+    echo "" > $log
+    echo "[ `date +%T` ] Cleanup Temporary..."
+    echo "[ `date +%T` ] Cleanup Temporary..." >> $log
+    neko_stop
+    php_stop
+    echo "[ `date +%T` ] Cleanup Done..."
+    echo "[ `date +%T` ] Cleanup Done..." >> $log
+}
+
+while getopts ":skrpcvh" signal ; do
+    case $signal in
+        s)
+            neko_start
+            ;;
+        k)
+            neko_stop
+            ;;
+        r)
+            neko_restart
+            ;;
+        p)
+            php_start
+            ;;
+        c)
+            cleanup
+            ;;
+        v)
+            neko_ver
+            neko_checknewver
+            echo "v.$neko_version $strversion"
+            ;;
+        h)
+            echo "Neko"
+            echo "      -s : Start Mihomo Proxy"
+            echo "      -p : Start PHP Server"
+            echo "      -k : Kill/Stop Mihomo Proxy"
+            echo "      -r : Restarting Mihomo Proxy"
+            echo "      -c : cleanup (kill mihomo + php server)"
+            echo "      -v : Version"
+            echo "      -h : help (this text)"
+            echo "Please Use ROOT User"
+            ;;
+    esac
+done

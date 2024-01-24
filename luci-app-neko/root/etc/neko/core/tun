@@ -1,0 +1,64 @@
+#!/bin/bash
+
+mkdir -p /dev/net
+[ ! -L /dev/net/tun ] && ln -s /dev/tun /dev/net/tun
+
+ulimit -SHn 1000000
+
+id="200"
+tun_device="Meta"
+iptables="iptables"
+
+intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 233.252.0.0/24 240.0.0.0/4 255.255.255.255/32)
+
+start_tun() {
+    ip rule add fwmark ${id} table ${id}
+    ip route add default dev ${tun_device} table ${id}
+
+    ${iptables} -I FORWARD -o ${tun_device} -j ACCEPT
+    ${iptables} -I FORWARD -i ${tun_device} -j ACCEPT
+    ${iptables} -t mangle -N CLASH_EXTERNAL
+
+    for subnet in ${intranet[@]} ; do
+        ${iptables} -t mangle -A CLASH_EXTERNAL -d ${subnet} -j RETURN
+    done
+
+    ${iptables} -t mangle -A CLASH_EXTERNAL -j MARK --set-xmark ${id}
+    ${iptables} -t mangle -I PREROUTING -j CLASH_EXTERNAL
+    ${iptables} -t mangle -N CLASH_LOCAL
+
+    for subnet in ${intranet[@]} ; do
+        ${iptables} -t mangle -A CLASH_LOCAL -d ${subnet} -j RETURN
+    done
+
+    ${iptables} -t mangle -A CLASH_LOCAL -j MARK --set-xmark ${id}
+    ${iptables} -t mangle -I OUTPUT -j CLASH_LOCAL
+}
+
+stop_tun() {
+    ip rule del fwmark ${id} table ${id}
+    ip route del default dev ${tun_device} table ${id}
+    
+    ${iptables} -F FORWARD
+    ${iptables} -X FORWARD
+
+    ${iptables} -t mangle -D OUTPUT -j CLASH_LOCAL
+    ${iptables} -t mangle -D PREROUTING -j CLASH_EXTERNAL
+
+    ${iptables} -t mangle -F CLASH_EXTERNAL
+    ${iptables} -t mangle -X CLASH_EXTERNAL
+
+    ${iptables} -t mangle -F CLASH_LOCAL
+    ${iptables} -t mangle -X CLASH_LOCAL
+}
+
+while getopts ":sk" signal ; do
+    case ${signal} in
+        s)
+            start_tun
+            ;;
+        k)
+            stop_tun
+            ;;
+    esac
+done

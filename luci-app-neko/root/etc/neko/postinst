@@ -1,0 +1,51 @@
+#!/bin/sh
+arch=`uname -m`
+neko_dir="/etc/neko"
+echo "Downloading Core Files"
+
+case "$arch" in
+aarch64)
+	arch="arm64"
+	echo "- Downloading Mihomo Binary - $arch"
+	;;
+arm)
+	arch="armv7"
+	echo "- Downloading Mihomo Binary - $arch"
+	;;
+x86_64)
+	arch="amd64"
+	echo "- Downloading Mihomo Binary - $arch"
+	;;
+*)
+	echo "- NEKO not supported!"
+	arch="0"
+	;;
+esac
+
+if [ $arch == "0" ] ; then
+	echo "- ERROR!!! Arch not supported"
+else
+	wget -q -O ${neko_dir}/core/mihomo.gz https://github.com/MetaCubeX/mihomo/releases/download/v1.18.0/mihomo-linux-${arch}-v1.18.0.gz
+	gzip -d ${neko_dir}/core/mihomo.gz
+
+	echo "- Downloading GeoIP Files"
+	wget -q -O ${neko_dir}/geoip.metadb https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb
+
+	echo "- Downloading GeoSite Files"
+	wget -q -O ${neko_dir}/geosite.db https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db
+
+	chmod +x /etc/init.d/neko
+	chmod +x ${neko_dir}/core/*
+fi
+
+uci set uhttpd.main.index_page='index.php'
+uci set uhttpd.main.interpreter='.php=/usr/bin/php-cgi'
+uci commit uhttpd
+
+uci set neko.cfg.enabled='0'
+uci set neko.cfg.php_server='0'
+uci commit neko
+
+echo "Done!!!"
+rm ${neko_dir}/postinst
+exit 0

@@ -32,10 +32,10 @@ endef
 
 define Package/$(PKG_NAME)/postrm
 #!/bin/sh
-	rm -rf /etc/neko >/dev/null 2>&1
-	rm -rf /etc/config/neko >/dev/null 2>&1
-	rm -rf /etc/init.d/neko >/dev/null 2>&1
-	rm -rf /www/nekoclash >/dev/null 2>&1
+	rm -rf /etc/neko
+	rm -rf /etc/config/neko
+	rm -rf /etc/init.d/neko
+	rm -rf /www/nekoclash
 	exit 0
 endef
 # call BuildPackage - OpenWrt buildroot signature

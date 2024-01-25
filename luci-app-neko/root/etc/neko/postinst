@@ -29,10 +29,10 @@ else
 	gzip -d ${neko_dir}/core/mihomo.gz
 
 	echo "- Downloading GeoIP Files"
-	wget -q -O ${neko_dir}/geoip.metadb https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb
+	wget -q -O ${neko_dir}/geoip.metadb https://github.com/rtaserver/meta-rules-dat/releases/download/latest/geoip.metadb
 
 	echo "- Downloading GeoSite Files"
-	wget -q -O ${neko_dir}/geosite.db https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db
+	wget -q -O ${neko_dir}/geosite.db https://github.com/rtaserver/meta-rules-dat/releases/download/latest/geosite.db
 
 	chmod +x /etc/init.d/neko
 	chmod +x ${neko_dir}/core/*

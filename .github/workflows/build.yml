@@ -45,7 +45,5 @@ jobs:
       - name: Delivering Package
         uses: actions/upload-artifact@v3
         with:
-          name: openwrt_${{ matrix.release }}_${{ matrix.arch }}
-          path: ${{ github.workspace }}/artifacts/bin/packages/${{ matrix.arch }}/base/luci-app-neko*
-
-        
+          name: luci-app-neko-${{ matrix.release }}_${{ matrix.arch }}
+          path: ${{ github.workspace }}/artifacts/bin/packages/${{ matrix.arch }}/action/luci-app-neko*

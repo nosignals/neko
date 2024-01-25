@@ -49,18 +49,11 @@ jobs:
 
   push_packages:
     needs: build_ipk
-    name: Push Packages 
+    name: Push Packages to Release
     permissions:
       contents: write  # To push a branch
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: 'gh-pages'
-          lfs: false
-          submodules: false
-      
       - name: Download temporary artifact
         uses: actions/download-artifact@v3
         

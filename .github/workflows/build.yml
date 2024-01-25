@@ -40,7 +40,6 @@ jobs:
           ARTIFACTS_DIR: ${{ github.workspace }}/artifacts
           FEED_DIR: ${{ github.workspace }}/feeds
           PACKAGES: luci-app-neko
-          NO_DEFAULT_FEEDS: 1
         
       - name: Delivering Package
         uses: actions/upload-artifact@v3

@@ -1,0 +1,51 @@
+#
+# Copyright (C) 2024 nosignals
+#
+name: Building Neko
+
+on:
+  workflow_dispatch:
+
+jobs: 
+  build_ipk:
+    permissions:
+      contents: write
+    name: Build Neko
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        release:
+          - 21.02.7
+          - 23.05.0
+        arch:
+          - x86_64
+          
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: luci-app-neko
+
+      - name: Preparing Neko
+        run: |
+              echo ""
+              mkdir feeds artifacts
+              cp -rf ./luci-app-neko ./feeds
+        
+      - name: Building Luci Neko
+        uses: nosignals/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.release }}
+          ARTIFACTS_DIR: ${{ github.workspace }}/artifacts
+          FEED_DIR: ${{ github.workspace }}/feeds
+          PACKAGES: luci-app-neko
+          V: sc
+        
+      - name: Delivering Package
+        uses: actions/upload-artifact@v3
+        with:
+          name: openwrt_${{ matrix.release }}_${{ matrix.arch }}
+          path: ${{ github.workspace }}/artifacts/bin/packages/${{ matrix.arch }}/base/luci-app-neko*
+
+        

@@ -39,7 +39,7 @@ jobs:
           ARCH: ${{ matrix.arch }}-${{ matrix.release }}
           ARTIFACTS_DIR: ${{ github.workspace }}/artifacts
           FEED_DIR: ${{ github.workspace }}/feeds
-          PACKAGES: luci-app-neko
+          PACKAGES: luci-app-neko -csstidy
         
       - name: Delivering Package
         uses: actions/upload-artifact@v3

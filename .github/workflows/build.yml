@@ -74,7 +74,7 @@ jobs:
           tag: ${{ github.ref }}
           file_glob: true
           body: |
-            # LUCI APP NEKO 1,0-beta
+            # LUCI APP NEKO 1.0-beta
             Simple Clash TUN based Proxy
             ### Information
             - Default Config : 
@@ -83,6 +83,7 @@ jobs:
             - Supported ARCH : 
               - ` arm64 / aarch64 `
               - ` x86_64 / amd64 `
+            - only support at Firewall3, Firewall4 soon
             ### Dependency Requirement
             - ` iptables, bash, kmod-tun, php, php-cgi ` (install PHP Manually before install Neko)
             - OpenWrt 21: ` php7 php7-cgi `

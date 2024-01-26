@@ -52,6 +52,6 @@ Screenshoot
   <img src="https://raw.githubusercontent.com/nosignals/neko/main/img/config-converter.png" alt="conv">
 </details>
 
-<details><summary>Config - Converter</summary>
+<details><summary>Settings</summary>
   <img src="https://raw.githubusercontent.com/nosignals/neko/main/img/setting.png" alt="setting">
 </details>

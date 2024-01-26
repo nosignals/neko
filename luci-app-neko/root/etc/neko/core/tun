@@ -8,7 +8,6 @@ ulimit -SHn 1000000
 id="200"
 tun_device="Meta"
 iptables="iptables"
-firewall="/etc/init.d/firewall"
 
 intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 233.252.0.0/24 240.0.0.0/4 255.255.255.255/32)
 
@@ -34,7 +33,6 @@ start_tun() {
 
     ${iptables} -t mangle -A CLASH_LOCAL -j MARK --set-xmark ${id}
     ${iptables} -t mangle -I OUTPUT -j CLASH_LOCAL
-    ${firewall} reload 2>/dev/null
 }
 
 stop_tun() {
@@ -52,7 +50,6 @@ stop_tun() {
 
     ${iptables} -t mangle -F CLASH_LOCAL
     ${iptables} -t mangle -X CLASH_LOCAL
-    ${firewall} reload 2>/dev/null
 }
 
 while getopts ":sk" signal ; do

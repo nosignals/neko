@@ -5,7 +5,13 @@ name: Building Neko
 
 on:
   workflow_dispatch:
-
+    inputs:
+      version:
+        description: 'Neko version'
+        required: false
+        default: '1.0-beta'
+        type: string
+        
 jobs: 
   build_ipk:
     permissions:
@@ -62,8 +68,8 @@ jobs:
         shell: bash
         run: |
           mkdir ./release
-          cp -rf ./luci-app-neko-21.02.7_x86_64/* ./release/luci-app-neko_1.0-beta_all_21_02.ipk
-          cp -rf ./luci-app-neko-23.05.0_x86_64/* ./release/luci-app-neko_1.0-beta_all_23_05.ipk
+          cp -rf ./luci-app-neko-21.02.7_x86_64/* ./release/luci-app-neko_${{ inputs.version }}_all_21_02.ipk
+          cp -rf ./luci-app-neko-23.05.0_x86_64/* ./release/luci-app-neko_${{ inputs.version }}_all_23_05.ipk
   
       - name: Upload release asset
         uses: svenstaro/upload-release-action@v2
@@ -74,18 +80,17 @@ jobs:
           tag: ${{ github.ref }}
           file_glob: true
           body: |
-            # LUCI APP NEKO 1.0-beta
+            # LUCI APP NEKO ${{ inputs.version }}
             Simple Clash TUN based Proxy
             ### Information
             - Default Config : 
-            - config.yaml : minimal Configs for Neko (only 1 rules) - Secret : ` sign `
-            - nosignals.yaml : 2 rules can added (Block Host, Game) - Secret : ` telekulo `
+              - config.yaml : minimal Configs for Neko (only 1 rules) - Secret : ` sign `
+              - nosignals.yaml : 2 rules can added (Block Host, Game) - Secret : ` telekulo `
             - Supported ARCH : 
               - ` arm64 / aarch64 `
               - ` x86_64 / amd64 `
-            - only support at Firewall3, Firewall4 soon
             ### Dependency Requirement
-            - ` iptables, bash, kmod-tun, php, php-cgi ` (install PHP Manually before install Neko)
+            - ` bash, kmod-tun, php, php-cgi ` (install PHP Manually before install Neko)
             - OpenWrt 21: ` php7 php7-cgi `
             - Openwrt 23: ` php8 php8-cgi ` 
             

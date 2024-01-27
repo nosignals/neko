@@ -74,7 +74,7 @@ stop_tun_fw4() {
 while getopts ":sk" signal ; do
     case ${signal} in
         s)
-            if [ -n $fw4 ] ; then
+            if [[ -n $fw4 ]] ; then
                 echo "[ `date +%T` ] - FW4 Detected"
                 start_tun_fw4
             else 
@@ -83,7 +83,7 @@ while getopts ":sk" signal ; do
             fi
             ;;
         k)
-            if [ -n $fw4 ] ; then
+            if [[ -n $fw4 ]] ; then
                 echo "[ `date +%T` ] - FW4 Detected"
                 stop_tun_fw4
             else 

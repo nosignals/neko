@@ -25,6 +25,14 @@ Features
 - Configs, Proxy, and Rules can edit on webui
 - xray/v2ray config converter
 
+About
+---
+nosignal is gone
+
+Credit
+---
+- nosignals
+
 Screenshoot
 ---
 <details><summary>Home</summary>
@@ -55,3 +63,4 @@ Screenshoot
 <details><summary>Settings</summary>
   <img src="https://raw.githubusercontent.com/nosignals/neko/main/img/setting.png" alt="setting">
 </details>
+

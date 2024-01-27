@@ -77,7 +77,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./release/*
           overwrite: true
-          tag: ${{ github.ref }}
+          tag: ${{ inputs.version }}
           file_glob: true
           body: |
             # LUCI APP NEKO ${{ inputs.version }}
@@ -91,7 +91,7 @@ jobs:
               - ` x86_64 / amd64 `
             ### Dependency Requirement
             - ` bash, kmod-tun, php, php-cgi ` (install PHP Manually before install Neko)
-            - OpenWrt 21: ` php7 php7-cgi `
-            - Openwrt 23: ` php8 php8-cgi ` 
+            - OpenWrt 21: ` php7 php7-cgi iptables `
+            - Openwrt 23: ` php8 php8-cgi nftables ` 
             
             ### Please Install with normal Connectivity

@@ -23,6 +23,7 @@ log="$neko_dir/tmp/log.txt"
 neko_ver(){
     neko_version="1.1.0-beta"
 }
+
 neko_checknewver(){
     new_version="test"
     if [ $neko_version == "1.1.0-beta" ] ; then
@@ -31,9 +32,101 @@ neko_checknewver(){
         strversion="- New Version v.$new_version"
     fi
 }
+
+check_depedency() {
+    opw_version=`cat /etc/os-release | grep VERSION_ID | cut -d\" -f 2`
+    echo "- Check Depedencies : $opw_version"
+	if [[ $opw_version == 18.* ]]; then
+        req=(php7 php7-cgi iptables kmod-tun)
+        list=`opkg list-installed | grep -E "php7|iptables|kmod-tun" | awk '{ print $1 }'`
+        for req_pkg in ${req[@]}; do
+            for lst_pkg in $list; do
+                stat=0
+                if [ ${req_pkg} == $lst_pkg ] ; then
+                    echo "- $req_pkg Installed"
+                    stat=0
+		     break;
+                else
+                    stat=1
+                fi
+            done
+            if [ $stat == 1 ] ; then
+                echo "[ `date +%T` ] - Package $req_pkg " >> $log
+                echo "[ `date +%T` ] - Installing $req_pkg " >> $log
+                opkg install $req_pkg
+            fi
+        done
+	elif [[ $opw_version == 21.* ]]; then
+        req=(php7 php7-cgi iptables kmod-tun)
+        list=`opkg list-installed | grep -E "php7|iptables|kmod-tun" | awk '{ print $1 }'`
+        for req_pkg in ${req[@]}; do
+            for lst_pkg in $list; do
+                stat=0
+                if [ ${req_pkg} == $lst_pkg ] ; then
+                    echo "- $req_pkg Installed"
+                    stat=0
+		     break;
+                else
+                    stat=1
+                fi
+            done
+            if [ $stat == 1 ] ; then
+                echo "[ `date +%T` ] - Package $req_pkg " >> $log
+                echo "[ `date +%T` ] - Installing $req_pkg " >> $log
+                opkg install $req_pkg
+            fi
+        done
+	elif [[ $opw_version == 22.* ]]; then
+        req=(php8 php8-cgi firewall4 xtables-nft kmod-tun)
+        list=`opkg list-installed | grep -E "php8|firewall4|kmod-tun|xtables-nft" | awk '{ print $1 }'`
+        for req_pkg in ${req[@]}; do
+            for lst_pkg in $list; do
+                stat=0
+                if [ ${req_pkg} == $lst_pkg ] ; then
+                    echo "- $req_pkg Installed"
+                    stat=0
+		     break;
+                else
+                    stat=1
+                fi
+            done
+            if [ $stat == 1 ] ; then
+                echo "[ `date +%T` ] - Package $req_pkg " >> $log
+                echo "[ `date +%T` ] - Installing $req_pkg " >> $log
+                opkg install $req_pkg
+            fi
+        done
+	elif [[ $opw_version == 23.* ]]; then
+        req=(php8 php8-cgi firewall4 xtables-nft kmod-tun)
+        list=`opkg list-installed | grep -E "php8|firewall4|kmod-tun|xtables-nft" | awk '{ print $1 }'`
+        for req_pkg in ${req[@]}; do
+            for lst_pkg in $list; do
+                stat=0
+                if [ ${req_pkg} == $lst_pkg ] ; then
+                    echo "- $req_pkg Installed"
+                    stat=0
+		     break;
+                else
+                    stat=1
+                fi
+            done
+            if [ $stat == 1 ] ; then
+                echo "[ `date +%T` ] - Package $req_pkg " >> $log
+                echo "[ `date +%T` ] - Installing $req_pkg " >> $log
+                opkg install $req_pkg
+            fi
+        done
+	else
+		echo "Zonk."
+	fi
+}
+
 neko_start(){
     neko_ver
     neko_checknewver
+    echo "[ `date +%T` ] - Checking Package..." >> $log
+    check_depedency
+    echo "[ `date +%T` ] - Done." >> $log
     echo "[ `date +%T` ] Starting Neko v.$neko_version $strversion"
     echo "[ `date +%T` ] Starting Neko v.$neko_version $strversion" >> $log
     if [ -f $neko_pid_path ] ; then

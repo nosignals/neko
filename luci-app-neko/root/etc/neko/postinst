@@ -1,7 +1,6 @@
 #!/bin/sh
 arch=`uname -m`
 neko_dir="/etc/neko"
-opw_version=`cat /etc/os-release | grep VERSION_ID | cut -d\" -f 2`
 
 core_ver="v1.18.0"
 url_core="https://github.com/MetaCubeX/mihomo/releases/download"
@@ -25,22 +24,6 @@ x86_64)
 	;;
 esac
 
-check_version() {
-	echo "- Detected Version $opw_version"
-	opkg update
-	if [[ $opw_version == 18.* ]]; then
-		opkg install php7 php7-cgi iptables
-	elif [[ $opw_version == 21.* ]]; then
-		opkg install php7 php7-cgi iptables
-	elif [[ $opw_version == 22.* ]]; then
-		opkg install php8 php8-cgi firewall4 xtables-nft
-	elif [[ $opw_version == 23.* ]]; then
-		opkg install php8 php8-cgi firewall4 xtables-nft
-	else
-		echo "Zonk."
-	fi
-}
-
 if [ $arch == "0" ] ; then
 	echo "- ERROR!!! Arch not supported"
 else
@@ -54,7 +37,6 @@ else
 	echo "- Downloading GeoSite Files"
 	wget -q -O ${neko_dir}/geosite.db ${url_geo}/geosite.db
 
-	check_version
 	chmod +x /etc/init.d/neko
 	chmod +x ${neko_dir}/core/*
 fi

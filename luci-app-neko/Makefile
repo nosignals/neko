@@ -9,7 +9,7 @@ PKG_NAME:=luci-app-neko
 PKG_VERSION:=1.0-beta
 
 LUCI_TITLE:=LuCI NekoClash
-LUCI_DEPENDS:=+firewall +iptables +kmod-tun +bash
+LUCI_DEPENDS:=+kmod-tun +bash
 LUCI_PKGARCH:=all
 LUCI_DESCRIPTION:=LuCI App NekoClash
 

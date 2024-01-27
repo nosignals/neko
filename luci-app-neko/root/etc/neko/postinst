@@ -1,20 +1,23 @@
 #!/bin/sh
 arch=`uname -m`
 neko_dir="/etc/neko"
+opw_version=`cat /etc/os-release | grep VERSION_ID | cut -d\" -f 2`
+
+core_ver="v1.18.0"
+url_core="https://github.com/MetaCubeX/mihomo/releases/download"
+url_geo="https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest"
+
 echo "Downloading Core Files"
 
 case "$arch" in
 aarch64)
 	arch="arm64"
-	echo "- Downloading Mihomo Binary - $arch"
 	;;
 arm)
 	arch="armv7"
-	echo "- Downloading Mihomo Binary - $arch"
 	;;
 x86_64)
 	arch="amd64"
-	echo "- Downloading Mihomo Binary - $arch"
 	;;
 *)
 	echo "- NEKO not supported!"
@@ -22,18 +25,36 @@ x86_64)
 	;;
 esac
 
+check_version() {
+
+	echo "- Detected Version $opw_version"
+	if [[ $opw_version == 18.* ]]; then
+		opkg install php7 php7-cgi iptables
+	elif [[ $opw_version == 21.* ]]; then
+		opkg install php7 php7-cgi iptables
+	elif [[ $opw_version == 22.* ]]; then
+		opkg install php8 php8-cgi firewall4 xtables-nft
+	elif [[ $opw_version == 23.* ]]; then
+		opkg install php8 php8-cgi firewall4 xtables-nft
+	else
+		echo "Zonk."
+	fi
+}
+
 if [ $arch == "0" ] ; then
 	echo "- ERROR!!! Arch not supported"
 else
-	wget -q -O ${neko_dir}/core/mihomo.gz https://github.com/MetaCubeX/mihomo/releases/download/v1.18.0/mihomo-linux-${arch}-v1.18.0.gz
+	echo "- Downloading Mihomo Binary - $arch"
+	wget -q -O ${neko_dir}/core/mihomo.gz ${url_core}/${core_ver}/mihomo-linux-${arch}-${core_ver}.gz
 	gzip -d ${neko_dir}/core/mihomo.gz
 
 	echo "- Downloading GeoIP Files"
-	wget -q -O ${neko_dir}/geoip.metadb https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb
+	wget -q -O ${neko_dir}/geoip.metadb ${url_geo}/geoip.metadb
 
 	echo "- Downloading GeoSite Files"
-	wget -q -O ${neko_dir}/geosite.db https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db
+	wget -q -O ${neko_dir}/geosite.db ${url_geo}/geosite.db
 
+	check_version
 	chmod +x /etc/init.d/neko
 	chmod +x ${neko_dir}/core/*
 fi

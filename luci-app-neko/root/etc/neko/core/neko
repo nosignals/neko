@@ -21,13 +21,14 @@ php_pid_path="$neko_tmp_dir/php_pid.txt"
 log="$neko_dir/tmp/log.txt"
 
 neko_ver(){
-    neko_version="1.0-beta"
+    neko_version="1.1.0-beta"
 }
 neko_checknewver(){
-    if [ $neko_version == "1.0-beta" ] ; then
+    new_version="test"
+    if [ $neko_version == "1.1.0-beta" ] ; then
         strversion="- Latest"
     else
-        strversion="- New Version xxx"
+        strversion="- New Version v.$new_version"
     fi
 }
 neko_start(){
@@ -38,16 +39,13 @@ neko_start(){
     if [ -f $neko_pid_path ] ; then
         echo "[ `date +%T` ] - Neko is Running..."
         echo "[ `date +%T` ] - Neko is Running..." >> $log
-        echo "[ `date +%T` ] - Cleaning iptables routing"
-        echo "[ `date +%T` ] - Cleaning iptables routing" >> $log
-        $tun_bin -k > /dev/null
+        $tun_bin -k >> $log
         echo "[ `date +%T` ] - Killing Neko. PID : `cat $neko_pid_path`"
         echo "[ `date +%T` ] - Killing Neko. PID : `cat $neko_pid_path`" >> $log
         kill `cat $neko_pid_path`
         uci set neko.cfg.enabled='0'
         uci commit neko
         rm $neko_pid_path
-        sleep 1
         echo "[ `date +%T` ] - Retry Starting Neko..."
         echo "[ `date +%T` ] - Retry Starting Neko..." >> $log
     else
@@ -65,11 +63,8 @@ neko_start(){
         echo "[ `date +%T` ] - Neko Started. PID : $neko_pid" >> $log
         echo "[ `date +%T` ] - Configs : $neko_config"
         echo "[ `date +%T` ] - Configs : $neko_config" >> $log
-        echo "[ `date +%T` ] - Starting iptables"
-        echo "[ `date +%T` ] - Starting iptables" >> $log
         echo $neko_pid > $neko_pid_path
-        sleep 1
-        $tun_bin -s > /dev/null
+        $tun_bin -s >> $log
         uci set neko.cfg.enabled='1'
         uci commit neko
     else
@@ -107,13 +102,12 @@ php_start(){
 neko_stop(){
     echo "[ `date +%T` ] Disable Neko"
     echo "[ `date +%T` ] Disable Neko" > $log
-    $tun_bin -k > /dev/null
+    $tun_bin -k >> $log
     if [ -f $neko_pid_path ] ; then
         echo "[ `date +%T` ] - Killing Neko PID : `cat $neko_pid_path`"
         echo "[ `date +%T` ] - Killing Neko PID : `cat $neko_pid_path`"  >> $log
         kill `cat $neko_pid_path`
         rm $neko_pid_path
-        sleep 1
         echo "[ `date +%T` ] Neko has Disabled"
         echo "[ `date +%T` ] Neko has Disabled" >> $log
         echo "[ `date +%T` ] Neko Disabled." > $neko_log
@@ -139,7 +133,6 @@ php_stop(){
         echo "[ `date +%T` ] - Killing PHP PID : `cat $php_pid_path`"  >> $log
         kill `cat $php_pid_path`
         rm $php_pid_path
-        sleep 1
         echo "[ `date +%T` ] - Done..."
         echo "[ `date +%T` ] - Done..." >> $log
     else

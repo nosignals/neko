@@ -4,7 +4,7 @@
 
 <p align="center">
 	<a target="_blank" href="#">
-   <img src="https://img.shields.io/badge/Neko-v1.0_beta-yellow.svg">
+   <img src="https://img.shields.io/badge/Neko-v1.1.0_beta-yellow.svg">
  </a>
 </p>
 

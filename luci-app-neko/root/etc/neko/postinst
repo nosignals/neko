@@ -26,8 +26,8 @@ x86_64)
 esac
 
 check_version() {
-
 	echo "- Detected Version $opw_version"
+	opkg update
 	if [[ $opw_version == 18.* ]]; then
 		opkg install php7 php7-cgi iptables
 	elif [[ $opw_version == 21.* ]]; then

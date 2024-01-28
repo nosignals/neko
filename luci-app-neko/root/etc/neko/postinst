@@ -2,8 +2,8 @@
 arch=`uname -m`
 neko_dir="/etc/neko"
 
-core_ver="v1.18.0"
-url_core="https://github.com/MetaCubeX/mihomo/releases/download"
+core_ver="dc2108c1"
+url_core="https://github.com/nosignals/neko/releases/download/core"
 url_geo="https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest"
 
 echo "Downloading Core Files"
@@ -28,7 +28,7 @@ if [ $arch == "0" ] ; then
 	echo "- ERROR!!! Arch not supported"
 else
 	echo "- Downloading Mihomo Binary - $arch"
-	wget -q -O ${neko_dir}/core/mihomo.gz ${url_core}/${core_ver}/mihomo-linux-${arch}-${core_ver}.gz
+	wget -q -O ${neko_dir}/core/mihomo.gz ${url_core}/mihomo-linux-${arch}-${core_ver}.gz
 	gzip -d ${neko_dir}/core/mihomo.gz
 
 	echo "- Downloading GeoIP Files"

@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_MAINTAINER:=nosignal
 PKG_NAME:=luci-app-neko
-PKG_VERSION:=1.1.1-beta
+PKG_VERSION:=1.1.2-beta
 
 LUCI_TITLE:=LuCI NekoClash
 LUCI_DEPENDS:=+kmod-tun +bash

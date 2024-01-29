@@ -30,12 +30,20 @@ define Package/$(PKG_NAME)/postinst
 	$(1)/etc/neko/postinst
 endef
 
+define Package/$(PKG_NAME)/prerm
+#!/bin/sh
+	uci set neko.cfg.enabled='0'
+	uci commit neko
+	cp -rf "/etc/neko" "/tmp/neko"
+	cp -rf "/etc/config/neko" "/tmp/neko"
+	cp -rf "/etc/init.d/neko" "/tmp/neko"
+	cp -rf "/www/nekoclash" "/tmp/neko"
+	exit 0
+endef
+
 define Package/$(PKG_NAME)/postrm
 #!/bin/sh
-	rm -rf /etc/neko
-	rm -rf /etc/config/neko
-	rm -rf /etc/init.d/neko
-	rm -rf /www/nekoclash
+	rm -rf /tmp/neko
 	exit 0
 endef
 # call BuildPackage - OpenWrt buildroot signature

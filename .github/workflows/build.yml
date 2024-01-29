@@ -8,8 +8,13 @@ on:
     inputs:
       version:
         description: 'Neko version'
-        required: false
+        required: true
         default: '1.0-beta'
+        type: string
+      changelog:
+        description: 'Changelog'
+        required: true
+        default: ''
         type: string
         
 jobs: 
@@ -83,6 +88,8 @@ jobs:
             # LUCI APP NEKO ${{ inputs.version }}
             Simple Clash TUN based Proxy
             ### Information
+            - Changelog : 
+              - ${{ inputs.changelog }}
             - Default Config : 
               - config.yaml : minimal Configs for Neko (only 1 rules) - Secret : ` sign `
               - nosignals.yaml : 2 rules can added (Block Host, Game) - Secret : ` telekulo `

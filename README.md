@@ -4,7 +4,10 @@
 
 <p align="center">
 	<a target="_blank" href="#">
-   <img src="https://img.shields.io/badge/Neko-v1.1.0_beta-yellow.svg">
+   <img src="https://img.shields.io/github/v/release/nosignals/neko?label=Neko%20%7C%20Build&color=yellow">
+ </a>
+	<a target="_blank" href="#">
+   <img src="https://img.shields.io/github/downloads/nosignals/neko/total?label=Total%20Downloader&labelColor=blue">
  </a>
 </p>
 

@@ -36,9 +36,9 @@ Usage
 * Neko Directory
   * Base Directory ` /home/hostname/.neko `
   * Clash Config Directory ` /home/hostname/.neko/config `
-    * Proxy Config Directory ` /home/hostname/.neko/config `
-    * Rules Config Directory ` /home/hostname/.neko/config `
-  * Core Script Directory ` /home/hostname/.neko/core `
+    * Proxy Config Directory ` /home/hostname/.neko/proxy_provider `
+    * Rules Config Directory ` /home/hostname/.neko/rule_provider `
+  * Core & Script Directory ` /home/hostname/.neko/core `
   * Web Directory ` /home/hostname/.neko/www `
     
  * Script Usage

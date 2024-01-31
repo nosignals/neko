@@ -34,6 +34,9 @@ jobs:
         run: |
               echo ""
               mkdir release
+              chmod +x ./neko-generic/neko
+              chmod +x ./neko-generic/install.sh
+              chmod +x ./neko-generic/core/neko
               tar czvf neko-v${{ inputs.version }}.tar.gz ./neko-generic/*
               cp -rf neko-v${{ inputs.version }}.tar.gz ./release/neko-v${{ inputs.version }}.tar.gz
               

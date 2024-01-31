@@ -1,0 +1,63 @@
+#
+# Copyright (C) 2024 nosignals
+#
+name: Building Neko - Linux Generic
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Neko version'
+        required: true
+        default: '1.0-0-beta_linux-generic'
+        type: string
+      changelog:
+        description: 'Changelog'
+        required: true
+        default: ''
+        type: string
+        
+jobs: 
+  build_ipk:
+    permissions:
+      contents: write
+    name: Build Neko - Linux Generic
+    runs-on: ubuntu-latest
+          
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: linux-generic
+
+      - name: Preparing Neko
+        run: |
+              echo ""
+              mkdir release
+              tar czvf neko-v${{ inputs.version }}.tar.gz ./neko-generic/*
+              cp -rf neko-v${{ inputs.version }}.tar.gz ./release/neko-v${{ inputs.version }}.tar.gz
+              
+      - name: Upload release asset
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./release/*
+          overwrite: true
+          tag: ${{ inputs.version }}
+          file_glob: true
+          body: |
+            # NEKO ${{ inputs.version }}
+            Simple Clash TUN based Proxy
+            ### Information
+            - Changelog : 
+              - ${{ inputs.changelog }}
+            - Default Config : 
+              - config.yaml : minimal Configs for Neko (only 1 rules) - Secret : ` sign `
+              - nosignals.yaml : 2 rules can added (Block Host, Game) - Secret : ` telekulo `
+            - Supported ARCH : 
+              - ` arm64 / aarch64 `
+              - ` x86_64 / amd64 `
+            ### Dependency Requirement
+            - ` php, php-cgi ` (install PHP Manually before install Neko)
+            
+            ### Please Install with normal Connectivity

@@ -1,0 +1,74 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:		neko
+# Short-Description:	Controlling running Neko Proxy 
+### END INIT INFO
+
+PATH="/sbin:/bin:/usr/sbin:/usr/bin"
+NAME="neko"
+DESC="Neko Proxy manager"
+
+hname=`logname`
+DIR="/home/${hname}/.neko"
+NEKO_CORE="${DIR}/core"
+NEKO_TMP="${DIR}/tmp"
+NEKO_WWW="${DIR}/www/nekoclash"
+STATUS=`cat ${NEKO_TMP}/neko.status`
+PHP_STATUS=`pgrep php`
+
+start_neko() {
+    if [[ $PHP_STATUS == "" ]]; then
+        echo "Starting PHP Server"
+    	${NEKO_CORE}/neko -p
+    	echo $PHP_STATUS
+    else
+    	echo "PHP server is running"
+    fi
+    
+    if [[ $STATUS == 1 ]] ; then
+    	${NEKO_CORE}/neko -s
+    fi
+}
+
+stop_neko() {
+    ${NEKO_CORE}/neko -k
+}
+
+reload_neko() {
+    ${NEKO_CORE}/neko -k
+    sleep 1
+    ${NEKO_CORE}/neko -s
+
+}
+clean_neko() {
+    ${NEKO_CORE}/neko -c
+}
+case "${1}" in
+	start)
+        echo "STARTING NEKO"
+        start_neko
+		;;
+
+	stop)
+        echo "DISABLE NEKO"
+        stop_neko
+		;;
+
+	restart|force-reload)
+        echo "Reloading Neko"
+        reload_neko
+		;;
+
+	cleanup)
+        echo "Cleanup Neko"
+        clean_neko
+		;;
+		
+	*)
+		echo "Usage: ${0} {start|stop|restart|force-reload|cleanup}" >&2
+		exit 1
+		;;
+esac
+
+exit 0

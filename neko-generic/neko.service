@@ -1,0 +1,13 @@
+[Unit]
+Description=Neko Service Daemon
+After=network.target NetworkManager.service systemd-networkd.service 
+
+[Service]
+ExecStartPre=/usr/bin/sleep 1s
+ExecStart=/etc/neko/core/neko -ps
+ExecReload=/etc/neko/core/neko -s
+ExecStop=/etc/neko/core/neko -k
+Restart=always
+
+[Install]
+WantedBy=default.target

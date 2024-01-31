@@ -1,0 +1,6 @@
+[ 23:11:11 ] Disable Neko
+[ 23:11:11 ] - Killing Neko PID : 0
+[ 23:11:12 ] Neko has Disabled
+[ 23:11:12 ] - Killing PHP PID : 0
+[ 23:11:13 ] - Done...
+[ 23:11:13 ] Cleanup Done...

@@ -56,6 +56,11 @@ Usage
       -v : Version
       -h : help (this text)
  ```
+  * Running at Startup (not tested)
+    1. Copy ` neko ` at extracted zip file to ` /etc/init.d/ `
+    2. ` sudo cp ./neko /etc/init.d/neko `
+    3. change permission ` sudo chmod 775 /etc/init.d/neko `
+    
 About
 ---
 nosignal is gone

@@ -32,8 +32,7 @@ endef
 
 define Package/$(PKG_NAME)/prerm
 #!/bin/sh
-	uci set neko.cfg.enabled='0'
-	uci commit neko
+	/etc/init.d/neko disable
 	cp -rf "/etc/neko" "/tmp/neko"
 	cp -rf "/etc/config/neko" "/tmp/neko"
 	cp -rf "/etc/init.d/neko" "/tmp/neko"
@@ -43,7 +42,9 @@ endef
 
 define Package/$(PKG_NAME)/postrm
 #!/bin/sh
-	rm -rf /tmp/neko
+	rm -rf /tmp/neko/
+	rm -rf /etc/neko/
+	rm -rf /www/nekoclash/
 	exit 0
 endef
 # call BuildPackage - OpenWrt buildroot signature

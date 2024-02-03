@@ -13,6 +13,7 @@ php_address="0.0.0.0"
 php_port="8080"
 
 tun_bin="$neko_dir/core/tun"
+reload_bin="$neko_dir/core/reload"
 
 neko_log="$neko_tmp_dir/neko_log.txt"
 neko_pid_path="$neko_tmp_dir/neko_pid.txt"
@@ -21,12 +22,12 @@ php_pid_path="$neko_tmp_dir/php_pid.txt"
 log="$neko_dir/tmp/log.txt"
 
 neko_ver(){
-    neko_version="1.1.0-beta"
+    neko_version="1.1.3-beta"
 }
 
 neko_checknewver(){
     new_version="test"
-    if [ $neko_version == "1.1.0-beta" ] ; then
+    if [ $neko_version == "1.1.3-beta" ] ; then
         strversion="- Latest"
     else
         strversion="- New Version v.$new_version"
@@ -160,6 +161,7 @@ neko_start(){
         $tun_bin -s >> $log
         uci set neko.cfg.enabled='1'
         uci commit neko
+        $reload_bin > /dev/null 2>&1 &
     else
         echo "[ `date +%T` ] - Core not Detected!!!"
         echo "[ `date +%T` ] - Core not Detected!!!" >> $log

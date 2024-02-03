@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 nosignal
+
+neko_status=$(uci -q get neko.cfg.enabled)
+neko_new_interface=$(uci -q get neko.cfg.new_interface)
+neko_delay=$(uci -q get neko.cfg.delay)
+neko_bin="/etc/neko/core/neko"
+neko_pid="/etc/neko/tmp/neko_pid.txt"
+log="/etc/neko/tmp/log.txt"
+firewall="/etc/init.d/firewall"
+
+if [ "$neko_status" == 1 ] && [ "$neko_new_interface" == 1 ]; then
+    echo "[ `date +%T` ] - Auto Restart Firewall : ON " >> $log
+    while true
+    do
+        echo "Checking New Interfaces."
+        first_iface_cnt=$(ip -o link show | grep -c '^[0-9]\+:')
+        sleep "$neko_delay"
+        second_iface_cnt=$(ip -o link show | grep -c '^[0-9]\+:')
+        
+        if [ "$first_iface_cnt" -eq "$second_iface_cnt" ]; then
+            if [ -f ${neko_pid} ]; then
+                echo "Nothing..."
+            else
+                break
+            fi
+        else
+            echo "Interface Changed!!!, Restarting Firewall"
+            echo "[ `date +%T` ] - Detected new Interface, Restarting Firewall " >> $log
+            sleep 5
+            #$neko_bin -r
+            $firewall reload
+        fi
+    done
+else
+    echo "[ `date +%T` ] - Auto Restart Firewall : OFF " >> $log
+fi

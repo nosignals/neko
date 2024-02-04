@@ -14,6 +14,7 @@ php_port="8080"
 
 tun_bin="$neko_dir/core/tun"
 reload_bin="$neko_dir/core/reload"
+firewall="/etc/init.d/firewall"
 
 neko_log="$neko_tmp_dir/neko_log.txt"
 neko_pid_path="$neko_tmp_dir/neko_pid.txt"
@@ -151,6 +152,9 @@ neko_start(){
         echo "[ `date +%T` ] - Core Detected : $core_version"
         echo "[ `date +%T` ] - Core Detected : $core_version" >> $log
         rm $neko_log
+        echo "[ `date +%T` ] - Restarting Firewall"
+        echo "[ `date +%T` ] - Restarting Firewall" >> $log
+        $firewall restart
         $neko_bin -f $neko_config -d $neko_dir >> $neko_log &
         neko_pid=`pgrep mihomo`
         echo "[ `date +%T` ] - Neko Started. PID : $neko_pid"
@@ -201,6 +205,9 @@ neko_stop(){
     if [ -f $neko_pid_path ] ; then
         echo "[ `date +%T` ] - Killing Neko PID : `cat $neko_pid_path`"
         echo "[ `date +%T` ] - Killing Neko PID : `cat $neko_pid_path`"  >> $log
+        echo "[ `date +%T` ] - Restarting Firewall"
+        echo "[ `date +%T` ] - Restarting Firewall" >> $log
+        $firewall restart
         kill `cat $neko_pid_path`
         rm $neko_pid_path
         echo "[ `date +%T` ] Neko has Disabled"

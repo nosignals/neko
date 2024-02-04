@@ -73,7 +73,7 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
             <table class="table table-borderless mb-3">
                 <tbody>
                     <tr>
-                        <td class="col-2">Auto Restart Firewall</td>
+                        <td class="col-2">Auto Restart Neko</td>
                         <form action="settings.php" method="post">
                             <td class="d-grid">
                                 <div class="btn-group col" role="group" aria-label="ctrl">

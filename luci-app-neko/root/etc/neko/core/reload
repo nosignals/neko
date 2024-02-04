@@ -11,7 +11,7 @@ log="/etc/neko/tmp/log.txt"
 firewall="/etc/init.d/firewall"
 
 if [ "$neko_status" == 1 ] && [ "$neko_new_interface" == 1 ]; then
-    echo "[ `date +%T` ] - Auto Restart Firewall : ON " >> $log
+    echo "[ `date +%T` ] - Auto Restart Neko : ON " >> $log
     sleep 5
     while true
     do
@@ -27,12 +27,13 @@ if [ "$neko_status" == 1 ] && [ "$neko_new_interface" == 1 ]; then
                 break
             fi
         else
-            echo "Interface Changed!!!, Restarting Firewall"
-            echo "[ `date +%T` ] - Detected new Interface, Restarting Firewall " >> $log
-            #$neko_bin -r
-            $firewall reload
+            echo "Interface Changed!!!, Restarting Neko"
+            echo "[ `date +%T` ] - Detected new Interface, Restarting Neko " >> $log
+            $neko_bin -r
+            break
+            #$firewall reload
         fi
     done
 else
-    echo "[ `date +%T` ] - Auto Restart Firewall : OFF " >> $log
+    echo "[ `date +%T` ] - Auto Restart Neko : OFF " >> $log
 fi

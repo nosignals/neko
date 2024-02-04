@@ -44,6 +44,7 @@ fi
 uci set uhttpd.main.index_page='index.php'
 uci set uhttpd.main.interpreter='.php=/usr/bin/php-cgi'
 uci commit uhttpd
+/etc/init.d/uhttpd restart
 
 uci set neko.cfg.enabled='0'
 uci set neko.cfg.php_server='0'

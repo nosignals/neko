@@ -12,6 +12,7 @@ firewall="/etc/init.d/firewall"
 
 if [ "$neko_status" == 1 ] && [ "$neko_new_interface" == 1 ]; then
     echo "[ `date +%T` ] - Auto Restart Firewall : ON " >> $log
+    sleep 5
     while true
     do
         echo "Checking New Interfaces."
@@ -28,7 +29,6 @@ if [ "$neko_status" == 1 ] && [ "$neko_new_interface" == 1 ]; then
         else
             echo "Interface Changed!!!, Restarting Firewall"
             echo "[ `date +%T` ] - Detected new Interface, Restarting Firewall " >> $log
-            sleep 5
             #$neko_bin -r
             $firewall reload
         fi

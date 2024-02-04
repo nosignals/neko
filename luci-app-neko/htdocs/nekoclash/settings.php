@@ -15,7 +15,12 @@ if(isset($_POST['themechange'])){
     shell_exec("echo $dt > $neko_www/lib/theme.txt");
     $neko_theme = $dt;
 }
-echo exec("cat $neko_theme");
+if(isset($_POST['fw'])){
+    $dt = $_POST['fw'];
+    if ($dt == 'enable') shell_exec("uci set neko.cfg.new_interface='1' && uci commit neko");
+    if ($dt == 'disable') shell_exec("uci set neko.cfg.new_interface='0' && uci commit neko");
+}
+$fwstatus=shell_exec("uci get neko.cfg.new_interface");
 ?>
 <!doctype html>
 <html lang="en" data-bs-theme="<?php echo substr($neko_theme,0,-4) ?>">
@@ -67,6 +72,17 @@ echo exec("cat $neko_theme");
             <h2 class="text-center p-2 mb-3">Software Information</h2>
             <table class="table table-borderless mb-3">
                 <tbody>
+                    <tr>
+                        <td class="col-2">Auto Restart Firewall</td>
+                        <form action="settings.php" method="post">
+                            <td class="d-grid">
+                                <div class="btn-group col" role="group" aria-label="ctrl">
+                                    <button type="submit" name="fw" value="enable" class="btn btn<?php if($fwstatus==1) echo "-outline" ?>-success <?php if($fwstatus==1) echo "disabled" ?> d-grid">Enable</button>
+                                    <button type="submit" name="fw" value="disable" class="btn btn<?php if($fwstatus==0) echo "-outline" ?>-danger <?php if($fwstatus==0) echo "disabled" ?> d-grid">Disable</button>
+                                </div>
+                            </td>
+                        </form>
+                    </tr>
                     <tr>
                         <td class="col-2">Client Version</td>
                         <td class="col-4">

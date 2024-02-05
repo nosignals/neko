@@ -35,6 +35,7 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
     <script type="text/javascript" src="./assets/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./assets/js/feather.min.js"></script>
     <script type="text/javascript" src="./assets/js/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="./assets/js/neko.js"></script>
   </head>
   <body>
     <div class="container-sm text-center col-8">
@@ -86,13 +87,13 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
                     <tr>
                         <td class="col-2">Client Version</td>
                         <td class="col-4">
-                            <input class="form-control text-center" name="cliver" type="text" placeholder="<?php echo exec("$neko_dir/core/neko -v") ?>" disabled>
+                            <div class="form-control text-center" id="cliver">-</div>
                         </td>
                     </tr>
                     <tr>
                         <td class="col-2">Core Version</td>
                         <td class="col-4">
-                            <input class="form-control text-center" name="corever" type="text" placeholder="<?php echo exec("$neko_bin -v | head -1 | awk '{print $5 \" \" $3}'") ?>" disabled>
+                            <div class="form-control text-center" id="corever">-</div>
                         </td>
                     </tr>
                 </tbody>

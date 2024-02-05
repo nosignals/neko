@@ -9,10 +9,23 @@ neko_bin="/etc/neko/core/neko"
 neko_pid="/etc/neko/tmp/neko_pid.txt"
 log="/etc/neko/tmp/log.txt"
 firewall="/etc/init.d/firewall"
+neko_version=$1
+
+neko_checknewver(){
+    new_version=$(curl -m 5 -f -s https://raw.githubusercontent.com/nosignals/neko/luci-app-neko/neko_version)
+    if [ $neko_version == $new_version ] || [ -z $new_version ]; then
+        strversion="- Latest"
+    else
+        strversion="- New v.$new_version"
+        if [ $1 == "log" ]; then
+            echo "[ `date +%T` ] New Version detected. v.$new_version" >> $log
+        fi
+    fi
+}
 
 if [ "$neko_status" == 1 ] && [ "$neko_new_interface" == 1 ]; then
     echo "[ `date +%T` ] - Auto Restart Neko : ON " >> $log
-    sleep 5
+    sleep 20 && neko_checknewver "log"
     while true
     do
         echo "Checking New Interfaces."
@@ -36,4 +49,5 @@ if [ "$neko_status" == 1 ] && [ "$neko_new_interface" == 1 ]; then
     done
 else
     echo "[ `date +%T` ] - Auto Restart Neko : OFF " >> $log
+    sleep 20 && neko_checknewver "log"
 fi

@@ -30,13 +30,13 @@ Neko Theme Structure
   - OpenWrt ` /www/nekoclash/assets/theme/ `
 - ### Structure
 ![image](https://github.com/nosignals/neko/assets/53216409/1922e3de-7370-4a9e-a0c5-b66dd78dddff)
-  1. Background Color
-  2. Secondary Background Color
-  3. Border Container
-  4. Button Success
-  5. Border Form Control
-  6. Button Danger
-  7. Button Warning
+  1. [Background Color](#background-color)
+  2. [Secondary Background Color](#secondary-background-color)
+  3. [Border Container](#border-container)
+  4. [Button Success](#button-success)
+  5. [Border Form Control](#border-form-control)
+  6. [Button Danger](#button-danger)
+  7. [Button Warning](#button-warning)
 
 Neko Theme CSS
 ---

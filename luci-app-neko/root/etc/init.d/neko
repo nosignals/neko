@@ -5,21 +5,8 @@ START=99
 
 BIN="/etc/neko/core/neko"
 
-boot() {
-	
-	if [ "$(uci -q get neko.cfg.enabled)" = "1" ]; then
-		$BIN -s
-	else
-		$BIN -k
-	fi
-
-	if [ "$(uci -q get neko.cfg.php_server)" = "1" ]; then
-		$BIN -p
-	fi
-}
-
 start() {
-	$BIN -s
+	sleep 1 && $BIN -s
 	if [ "$(uci -q get neko.cfg.php_server)" = "1" ]; then
 		$BIN -p
 	fi
@@ -29,7 +16,7 @@ restart() {
 	$BIN -r
 }
 
-stop() {
+stop_service() {
 	if [ "$(uci -q get neko.cfg.php_server)" = "1" ]; then
 		$BIN -c
 	else

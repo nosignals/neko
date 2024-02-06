@@ -2,7 +2,7 @@
 
 include './cfg.php';
 include './devinfo.php';
-$str_cfg=substr($selected_config, strlen($neko_dir)+1);
+$str_cfg=substr($selected_config, strlen("$neko_dir/config")+1);
 
 if(isset($_POST['neko'])){
     $dt = $_POST['neko'];

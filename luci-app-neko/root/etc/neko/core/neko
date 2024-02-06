@@ -23,7 +23,7 @@ php_pid_path="$neko_tmp_dir/php_pid.txt"
 log="$neko_dir/tmp/log.txt"
 
 neko_ver(){
-    neko_version="1.1.6-beta"
+    neko_version="1.1.7-beta"
 }
 
 neko_checknewver(){
@@ -150,6 +150,7 @@ neko_start(){
         echo "[ `date +%T` ] - Neko not Running..." >> $log
     fi
     if [ -f $neko_bin ] ; then
+        kill `pgrep reload`
         core_version=`$neko_bin -v | head -1 | awk '{print $1 " " $3}'`
         echo "[ `date +%T` ] - Core Detected : $core_version"
         echo "[ `date +%T` ] - Core Detected : $core_version" >> $log

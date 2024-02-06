@@ -30,15 +30,21 @@ external-ui: ui
 dns:
   enable: true
   ipv6: false
-  enhanced-mode: redir-host
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - '*.lan'
   listen: 127.0.0.1:5053
+  default-nameserver:
+    - 8.8.8.8
+    - 1.1.1.1
   nameserver:
-  - 1.1.1.1
-  - 8.8.4.4
+    - 'tls://dns.google#proxy'
   fallback:
-  - https://cloudflare-dns.com/dns-query
-  - https://1.1.1.1/dns-query
-  - tls://8.8.8.8:853
+    - tls://8.8.4.4
+    - tls://1.1.1.1
+  proxy-server-nameserver:
+    - https://1.1.1.1/dns-query
   fallback-filter:
     geoip: false
     ipcidr:
@@ -84,3 +90,5 @@ sniffer:
   parse-pure-ip: true
 tun:
   enable: true
+  dns-hijack:
+    - any:53

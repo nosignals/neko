@@ -19,11 +19,7 @@ boot() {
 }
 
 start() {
-	if [ "$(uci -q get neko.cfg.enabled)" = "1" ]; then
-		$BIN -s
-	else
-		$BIN -k
-	fi
+	$BIN -s
 	if [ "$(uci -q get neko.cfg.php_server)" = "1" ]; then
 		$BIN -p
 	fi
@@ -37,6 +33,6 @@ stop() {
 	if [ "$(uci -q get neko.cfg.php_server)" = "1" ]; then
 		$BIN -c
 	else
-		$BIN -s
+		$BIN -k
 	fi
 }

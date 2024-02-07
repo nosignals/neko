@@ -78,11 +78,11 @@ if [ -f "/tmp/neko/neko.bak" ]; then
     chmod 0755 /etc/neko/core/mihomo
     cp -rf "/tmp/neko/geoip.metadb" "/etc/neko/geoip.metadb"
     cp -rf "/tmp/neko/geosite.db" "/etc/neko/geosite.db"
+    cp -rf "/tmp/neko/cache.db" "/etc/neko/cache.db"
 
     cp -rf /tmp/neko/config/* "/etc/neko/config/"
     cp -rf /tmp/neko/proxy_provider/* "/etc/neko/proxy_provider/"
     cp -rf /tmp/neko/rule_provider/* "/etc/neko/rule_provider/"
-    rm -rf /tmp/neko/neko.bak
 else
     echo "[ `date +%T` ] - Old Files Not Detected, Checking Files"
     files_check

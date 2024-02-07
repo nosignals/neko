@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 nosignal
+
+arch=`uname -m`
+neko_dir="/etc/neko"
+log="$neko_dir/tmp/log.txt"
+    
+core_ver="dc2108c1"
+url_core="https://github.com/nosignals/neko/releases/download/core"
+url_geo="https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest"
+
+geoip_path="${neko_dir}/geoip.metadb"
+geosite_path="${neko_dir}/geosite.db"
+
+files_check() {
+    case "$arch" in
+    aarch64)
+        arch="arm64"
+        ;;
+    arm)
+        arch="armv7"
+    	;;
+    x86_64)
+        arch="amd64"
+        ;;
+    *)
+        arch="0"
+        ;;
+    esac
+    
+    if [ $arch == "0" ] ; then
+        echo "[ `date +%T` ] - ERROR!!! Arch not supported"
+    else
+        if [ -f ${neko_bin} ]; then
+            echo "[ `date +%T` ] - Mihomo OK"
+        else
+            echo "[ `date +%T` ] - Downloading Mihomo Binary - $arch"
+            echo "[ `date +%T` ] - Downloading Mihomo Binary - $arch" >> $log
+            wget -q -O ${neko_dir}/core/mihomo.gz ${url_core}/mihomo-linux-${arch}-${core_ver}.gz
+            gzip -d ${neko_dir}/core/mihomo.gz
+        fi
+
+        if [ -f ${geoip_path} ]; then
+            echo "[ `date +%T` ] - GeoIP OK"
+        else
+            echo "[ `date +%T` ] - Downloading GeoIP"
+            echo "[ `date +%T` ] - Downloading GeoIP" >> $log
+            wget -q -O ${geoip_path} ${url_geo}/geoip.metadb
+        fi
+
+        if [ -f ${geosite_path} ]; then
+            echo "[ `date +%T` ] - GeoSite OK"
+        else
+            echo "[ `date +%T` ] - Downloading GeoSite"
+            echo "[ `date +%T` ] - Downloading GeoSite" >> $log
+            wget -q -O ${neko_dir} ${url_geo}/geosite.db
+        fi
+    fi
+}
+files_check
+
+uci set uhttpd.main.index_page='index.php'
+uci set uhttpd.main.interpreter='.php=/usr/bin/php-cgi'
+uci commit uhttpd
+
+/etc/init.d/uhttpd restart
+
+uci set neko.cfg.enabled='0'
+uci set neko.cfg.php_server='0'
+uci commit neko
+
+chmod +x $neko_dir/core/*

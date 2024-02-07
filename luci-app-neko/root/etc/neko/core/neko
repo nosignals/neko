@@ -22,8 +22,12 @@ neko_status=`uci -q get neko.cfg.enabled`
 php_pid_path="$neko_tmp_dir/php_pid.txt"
 log="$neko_dir/tmp/log.txt"
 
+core_ver="dc2108c1"
+url_core="https://github.com/nosignals/neko/releases/download/core"
+url_geo="https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest"
+
 neko_ver(){
-    neko_version="1.1.7-beta"
+    neko_version="0.0.0-beta"
 }
 
 neko_checknewver(){
@@ -40,17 +44,17 @@ neko_checknewver(){
 
 check_depedency() {
     opw_version=`cat /etc/os-release | grep VERSION_ID | cut -d\" -f 2`
-    echo "- Check Depedencies : $opw_version"
-	if [[ $opw_version == 18.* ]]; then
+    echo "[ `date +%T` ] - Check Depedencies : $opw_version"
+    if [[ $opw_version == 18.* ]]; then
         req=(curl php7 php7-cgi iptables kmod-tun)
         list=`opkg list-installed | grep -E "curl|php7|iptables|kmod-tun" | awk '{ print $1 }'`
         for req_pkg in ${req[@]}; do
             for lst_pkg in $list; do
                 stat=0
                 if [ ${req_pkg} == $lst_pkg ] ; then
-                    echo "- $req_pkg Installed"
+                    echo "[ `date +%T` ] - $req_pkg Installed"
                     stat=0
-		     break;
+                    break;
                 else
                     stat=1
                 fi
@@ -61,16 +65,16 @@ check_depedency() {
                 opkg install $req_pkg
             fi
         done
-	elif [[ $opw_version == 21.* ]]; then
+    elif [[ $opw_version == 21.* ]]; then
         req=(curl php7 php7-cgi iptables kmod-tun)
         list=`opkg list-installed | grep -E "curl|php7|iptables|kmod-tun" | awk '{ print $1 }'`
         for req_pkg in ${req[@]}; do
             for lst_pkg in $list; do
                 stat=0
                 if [ ${req_pkg} == $lst_pkg ] ; then
-                    echo "- $req_pkg Installed"
+                    echo "[ `date +%T` ] - $req_pkg Installed"
                     stat=0
-		     break;
+                    break;
                 else
                     stat=1
                 fi
@@ -81,16 +85,16 @@ check_depedency() {
                 opkg install $req_pkg
             fi
         done
-	elif [[ $opw_version == 22.* ]]; then
+    elif [[ $opw_version == 22.* ]]; then
         req=(curl php8 php8-cgi firewall4 xtables-nft kmod-tun)
         list=`opkg list-installed | grep -E "curl|php8|firewall4|kmod-tun|xtables-nft" | awk '{ print $1 }'`
         for req_pkg in ${req[@]}; do
             for lst_pkg in $list; do
                 stat=0
                 if [ ${req_pkg} == $lst_pkg ] ; then
-                    echo "- $req_pkg Installed"
+                    echo "[ `date +%T` ] - $req_pkg Installed"
                     stat=0
-		     break;
+                    break;
                 else
                     stat=1
                 fi
@@ -101,16 +105,16 @@ check_depedency() {
                 opkg install $req_pkg
             fi
         done
-	elif [[ $opw_version == 23.* ]]; then
+    elif [[ $opw_version == 23.* ]]; then
         req=(curl php8 php8-cgi firewall4 xtables-nft kmod-tun)
         list=`opkg list-installed | grep -E "curl|php8|firewall4|kmod-tun|xtables-nft" | awk '{ print $1 }'`
         for req_pkg in ${req[@]}; do
             for lst_pkg in $list; do
                 stat=0
                 if [ ${req_pkg} == $lst_pkg ] ; then
-                    echo "- $req_pkg Installed"
+                    echo "[ `date +%T` ] - $req_pkg Installed"
                     stat=0
-		     break;
+                    break;
                 else
                     stat=1
                 fi
@@ -121,37 +125,85 @@ check_depedency() {
                 opkg install $req_pkg
             fi
         done
-	else
-		echo "Zonk."
-	fi
+    else
+        echo "Zonk."
+    fi
+}
+
+files_check() {
+    arch=`uname -m`
+    geoip_path="${neko_dir}/geoip.metadb"
+    geosite_path="${neko_dir}/geosite.db"
+    case "$arch" in
+    aarch64)
+        arch="arm64"
+        ;;
+    arm)
+        arch="armv7"
+    	;;
+    x86_64)
+        arch="amd64"
+        ;;
+    *)
+        arch="0"
+        ;;
+    esac
+    
+    if [ $arch == "0" ] ; then
+        echo "[ `date +%T` ] - ERROR!!! Arch not supported"
+    else
+        if [ -f ${neko_bin} ]; then
+            echo "[ `date +%T` ] - Mihomo OK"
+        else
+            echo "[ `date +%T` ] - Downloading Mihomo Binary - $arch"
+            echo "[ `date +%T` ] - Downloading Mihomo Binary - $arch" >> $log
+            wget -q -O ${neko_dir}/core/mihomo.gz ${url_core}/mihomo-linux-${arch}-${core_ver}.gz
+            gzip -d ${neko_dir}/core/mihomo.gz
+        fi
+
+        if [ -f ${geoip_path} ]; then
+            echo "[ `date +%T` ] - GeoIP OK"
+        else
+            echo "[ `date +%T` ] - Downloading GeoIP"
+            echo "[ `date +%T` ] - Downloading GeoIP" >> $log
+            wget -q -O ${geoip_path} ${url_geo}/geoip.metadb
+        fi
+
+        if [ -f ${geosite_path} ]; then
+            echo "[ `date +%T` ] - GeoSite OK"
+        else
+            echo "[ `date +%T` ] - Downloading GeoSite"
+            echo "[ `date +%T` ] - Downloading GeoSite" >> $log
+            wget -q -O ${neko_dir} ${url_geo}/geosite.db
+        fi
+    fi
 }
 
 neko_start(){
     neko_ver
+    echo "[ `date +%T` ] Starting Neko v.$neko_version"
+    echo "[ `date +%T` ] Starting Neko v.$neko_version" > $log
     echo "[ `date +%T` ] - Checking Package..." >> $log
     check_depedency
-    echo "[ `date +%T` ] - Done." >> $log
-    echo "[ `date +%T` ] Starting Neko v.$neko_version"
-    echo "[ `date +%T` ] Starting Neko v.$neko_version" >> $log
+    files_check
+    echo "[ `date +%T` ] - Checking Package Done." >> $log
     if [ -f $neko_pid_path ] ; then
-        echo "[ `date +%T` ] - Neko is Running..."
-        echo "[ `date +%T` ] - Neko is Running..." >> $log
+        echo "[ `date +%T` ] - Neko is Running. Killing Neko PID : `cat $neko_pid_path`"
+        echo "[ `date +%T` ] - Neko is Running. Killing Neko PID : `cat $neko_pid_path`" >> $log
         $tun_bin -k >> $log
-        echo "[ `date +%T` ] - Killing Neko. PID : `cat $neko_pid_path`"
-        echo "[ `date +%T` ] - Killing Neko. PID : `cat $neko_pid_path`" >> $log
         kill `cat $neko_pid_path`
         uci set neko.cfg.enabled='0'
         uci commit neko
         rm $neko_pid_path
         echo "[ `date +%T` ] - Retry Starting Neko..."
         echo "[ `date +%T` ] - Retry Starting Neko..." >> $log
-    else
-        echo "[ `date +%T` ] - Neko not Running..."
-        echo "[ `date +%T` ] - Neko not Running..." >> $log
     fi
     if [ -f $neko_bin ] ; then
-        kill `pgrep reload`
-        core_version=`$neko_bin -v | head -1 | awk '{print $1 " " $3}'`
+        rpid=`pgrep "mihomo|reload"`
+        if [[ -n $rpid ]] ; then
+            kill $rpid 
+        fi
+        core_version=`$neko_bin -v | head -1 | awk '{print $1 " " $5 " " $3}'`
         echo "[ `date +%T` ] - Core Detected : $core_version"
         echo "[ `date +%T` ] - Core Detected : $core_version" >> $log
         rm $neko_log
@@ -159,6 +211,7 @@ neko_start(){
         echo "[ `date +%T` ] - Restarting Firewall" >> $log
         $firewall restart
         $neko_bin -f $neko_config -d $neko_dir >> $neko_log &
+        sleep 1
         neko_pid=`pgrep mihomo`
         echo "[ `date +%T` ] - Neko Started. PID : $neko_pid"
         echo "[ `date +%T` ] - Neko Started. PID : $neko_pid" >> $log

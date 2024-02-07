@@ -44,11 +44,14 @@ endef
 define Package/$(PKG_NAME)/preinst
 #!/bin/sh
 	if [ -f "/etc/config/neko" ]; then
-		cp -f "/etc/config/openclash" "/tmp/neko.bak"
-		cp -rf "/etc/neko" "/tmp/neko"
+		uci set neko.cfg.enabled='0'
+		uci commit neko
 
-		rm -rf /etc/neko/core/*
-		rm -rf /www/nekoclash/
+		cp -f "/etc/config/neko" "/tmp/neko.bak"
+		cp -rf "/etc/neko/" "/tmp/neko/"
+
+		rm -rf /etc/neko/core/* >/dev/null 2>&1
+		rm -rf /www/nekoclash/ >/dev/null 2>&1
 	fi
 	exit 0
 endef
@@ -56,9 +59,13 @@ endef
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 	if [ -f "/tmp/neko.bak" ]; then
-		cp -rf "/tmp/neko/core/mihomo" "/tmp/neko/core/mihomo"
-		cp -rf "/tmp/neko/geoip.metadb" "/tmp/neko/geoip.metadb"
-		cp -rf "/tmp/neko/geosite.db" "/tmp/neko/geosite.db"
+		cp -rf "/tmp/neko/core/mihomo" "/etc/neko/core/mihomo"
+		cp -rf "/tmp/neko/geoip.metadb" "/etc/neko/geoip.metadb"
+		cp -rf "/tmp/neko/geosite.db" "/etc/neko/geosite.db"
+
+		cp -rf /tmp/neko/config/* "/etc/neko/config/"
+		cp -rf /tmp/neko/proxy_provider/* "/etc/neko/proxy_provider/"
+		cp -rf /tmp/neko/rule_provider/* "/etc/neko/rule_provider/"
 	fi
 	exit 0
 endef
@@ -76,8 +83,8 @@ endef
 
 define Package/$(PKG_NAME)/postrm
 #!/bin/sh
-	rm -rf /etc/neko/
-	rm -rf /www/nekoclash/
+	rm -rf /etc/neko/ >/dev/null 2>&1
+	rm -rf /www/nekoclash/ >/dev/null 2>&1
 	exit 0
 endef
 

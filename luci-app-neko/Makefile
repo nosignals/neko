@@ -46,7 +46,7 @@ define Package/$(PKG_NAME)/preinst
 	if [ -f "/etc/config/neko" ]; then
 		/etc/neko/core/neko -c
 
-		cp -f "/etc/config/neko" "/tmp/neko.bak"
+		cp -f "/etc/config/neko" "/tmp/neko/neko.bak"
 		cp -rf "/etc/neko/" "/tmp/neko/"
 
 		rm -rf /etc/neko/core/* >/dev/null 2>&1
@@ -57,7 +57,7 @@ endef
 
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
-	if [ -f "/tmp/neko.bak" ]; then
+	if [ -f "/tmp/neko/neko.bak" ]; then
 		cp -rf "/tmp/neko/core/mihomo" "/etc/neko/core/mihomo"
 		chmod 0755 /etc/neko/core/mihomo
 		cp -rf "/tmp/neko/geoip.metadb" "/etc/neko/geoip.metadb"

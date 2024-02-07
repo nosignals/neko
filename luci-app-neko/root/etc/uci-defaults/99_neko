@@ -13,7 +13,20 @@ url_geo="https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest"
 geoip_path="${neko_dir}/geoip.metadb"
 geosite_path="${neko_dir}/geosite.db"
 
+rpid=`pgrep "neko/core"`
+if [[ -n $rpid ]] ; then
+    kill $rpid 
+fi
+
+echo "[ `date +%T` ] - Checking Files"
+
 files_check() {
+    uci set uhttpd.main.index_page='index.php'
+    uci set uhttpd.main.interpreter='.php=/usr/bin/php-cgi'
+    uci commit uhttpd
+
+    /etc/init.d/uhttpd restart
+
     case "$arch" in
     aarch64)
         arch="arm64"
@@ -57,13 +70,19 @@ files_check() {
             wget -q -O ${neko_dir} ${url_geo}/geosite.db
         fi
     fi
+    chmod +x $neko_dir/core/mihomo
 }
-files_check
+if [ -f "/tmp/neko/neko.bak" ]; then
+    echo "[ `date +%T` ] - Skipped, Old Files Detected"
+    cp -rf "/tmp/neko/core/mihomo" "/etc/neko/core/mihomo"
+    chmod 0755 /etc/neko/core/mihomo
+    cp -rf "/tmp/neko/geoip.metadb" "/etc/neko/geoip.metadb"
+    cp -rf "/tmp/neko/geosite.db" "/etc/neko/geosite.db"
 
-uci set uhttpd.main.index_page='index.php'
-uci set uhttpd.main.interpreter='.php=/usr/bin/php-cgi'
-uci commit uhttpd
-
-/etc/init.d/uhttpd restart
-
-chmod +x $neko_dir/core/mihomo
+    cp -rf /tmp/neko/config/* "/etc/neko/config/"
+    cp -rf /tmp/neko/proxy_provider/* "/etc/neko/proxy_provider/"
+    cp -rf /tmp/neko/rule_provider/* "/etc/neko/rule_provider/"
+else
+    echo "[ `date +%T` ] - Old Files Not Detected, Checking Files"
+    files_check
+fi

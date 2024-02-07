@@ -59,7 +59,7 @@ check_depedency() {
                     stat=1
                 fi
             done
-            if [ $stat == 1 ] ; then
+            if [ $stat = 1 ] ; then
                 echo "[ `date +%T` ] - Package $req_pkg " >> $log
                 echo "[ `date +%T` ] - Installing $req_pkg " >> $log
                 opkg install $req_pkg
@@ -79,7 +79,7 @@ check_depedency() {
                     stat=1
                 fi
             done
-            if [ $stat == 1 ] ; then
+            if [ $stat = 1 ] ; then
                 echo "[ `date +%T` ] - Package $req_pkg " >> $log
                 echo "[ `date +%T` ] - Installing $req_pkg " >> $log
                 opkg install $req_pkg
@@ -99,7 +99,7 @@ check_depedency() {
                     stat=1
                 fi
             done
-            if [ $stat == 1 ] ; then
+            if [ $stat = 1 ] ; then
                 echo "[ `date +%T` ] - Package $req_pkg " >> $log
                 echo "[ `date +%T` ] - Installing $req_pkg " >> $log
                 opkg install $req_pkg
@@ -119,7 +119,7 @@ check_depedency() {
                     stat=1
                 fi
             done
-            if [ $stat == 1 ] ; then
+            if [ $stat = 1 ] ; then
                 echo "[ `date +%T` ] - Package $req_pkg " >> $log
                 echo "[ `date +%T` ] - Installing $req_pkg " >> $log
                 opkg install $req_pkg

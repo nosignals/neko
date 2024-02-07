@@ -66,8 +66,6 @@ uci commit uhttpd
 
 /etc/init.d/uhttpd restart
 
-uci set neko.cfg.enabled='0'
-uci set neko.cfg.php_server='0'
-uci commit neko
+/etc/neko/core/neko -c
 
 chmod +x $neko_dir/core/*

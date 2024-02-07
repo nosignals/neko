@@ -177,6 +177,7 @@ files_check() {
             wget -q -O ${neko_dir} ${url_geo}/geosite.db
         fi
     fi
+    chmod +x ${neko_dir}/core/*
 }
 
 neko_start(){

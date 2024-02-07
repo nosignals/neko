@@ -23,3 +23,11 @@ stop_service() {
 		$BIN -k
 	fi
 }
+
+stop() {
+	if [ "$(uci -q get neko.cfg.php_server)" = "1" ]; then
+		$BIN -c
+	else
+		$BIN -k
+	fi
+}

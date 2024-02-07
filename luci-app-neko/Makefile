@@ -73,7 +73,8 @@ endef
 define Package/$(PKG_NAME)/prerm
 #!/bin/sh
 	/etc/neko/core/neko -k
-	
+
+	cp -f "/etc/config/neko" "/tmp/neko/neko.bak"
 	cp -rf "/etc/neko/" "/tmp/neko/"
 	cp -rf "/www/nekoclash/" "/tmp/neko/nekoclash/"
 	exit 0
@@ -92,7 +93,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/www/nekoclash
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
-	$(CP) $(PKG_BUILD_DIR)/htdocs/nekoclash/ $(1)/www/nekoclash/
+	$(CP) $(PKG_BUILD_DIR)/htdocs/* $(1)/www/nekoclash/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

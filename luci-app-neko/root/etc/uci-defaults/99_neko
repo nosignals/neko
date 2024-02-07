@@ -87,3 +87,6 @@ else
     echo "[ `date +%T` ] - Old Files Not Detected, Checking Files"
     files_check
 fi
+
+uci set neko.cfg.enabled='0'
+uci commit neko

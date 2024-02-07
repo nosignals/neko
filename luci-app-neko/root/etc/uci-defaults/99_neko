@@ -66,6 +66,4 @@ uci commit uhttpd
 
 /etc/init.d/uhttpd restart
 
-/etc/neko/core/neko -c
-
-chmod +x $neko_dir/core/*
+chmod +x $neko_dir/core/mihomo

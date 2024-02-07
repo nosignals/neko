@@ -44,8 +44,7 @@ endef
 define Package/$(PKG_NAME)/preinst
 #!/bin/sh
 	if [ -f "/etc/config/neko" ]; then
-		uci set neko.cfg.enabled='0'
-		uci commit neko
+		/etc/neko/core/neko -c
 
 		cp -f "/etc/config/neko" "/tmp/neko.bak"
 		cp -rf "/etc/neko/" "/tmp/neko/"
@@ -60,6 +59,7 @@ define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 	if [ -f "/tmp/neko.bak" ]; then
 		cp -rf "/tmp/neko/core/mihomo" "/etc/neko/core/mihomo"
+		chmod 0755 /etc/neko/core/mihomo
 		cp -rf "/tmp/neko/geoip.metadb" "/etc/neko/geoip.metadb"
 		cp -rf "/tmp/neko/geosite.db" "/etc/neko/geosite.db"
 
@@ -72,9 +72,7 @@ endef
 
 define Package/$(PKG_NAME)/prerm
 #!/bin/sh
-	uci set neko.cfg.enabled='0'
-	uci set neko.cfg.php_server='0'
-	uci commit neko
+	/etc/neko/core/neko -k
 	
 	cp -rf "/etc/neko/" "/tmp/neko/"
 	cp -rf "/www/nekoclash/" "/tmp/neko/nekoclash/"
@@ -91,9 +89,10 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/neko
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
+	$(INSTALL_DIR) $(1)/www/nekoclash
 	$(CP) $(PKG_BUILD_DIR)/root/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
-	$(CP) $(PKG_BUILD_DIR)/htdocs/* $(1)/www/
+	$(CP) $(PKG_BUILD_DIR)/htdocs/nekoclash/ $(1)/www/nekoclash/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

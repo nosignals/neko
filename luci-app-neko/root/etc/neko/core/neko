@@ -30,6 +30,15 @@ neko_ver(){
     neko_version="0.0.0-beta"
 }
 
+logs() {
+    echo "[ `date +%T` ] $1"
+    if [ -z $2 ]; then
+        echo "[ `date +%T` ] $1" >> $log
+    elif [ $2 -eq 2 ]; then
+        echo "[ `date +%T` ] $1" > $log
+    fi
+}
+
 neko_checknewver(){
     new_version=$(curl -m 5 -f -s https://raw.githubusercontent.com/nosignals/neko/luci-app-neko/neko_version)
     if [ $neko_version = $new_version ] || [ -z $new_version ]; then
@@ -37,14 +46,14 @@ neko_checknewver(){
     else
         strversion="- New Version v.$new_version"
         if [[ $1 == "log" ]]; then
-            echo "[ `date +%T` ] New Version v.$new_version" >> $log
+            logs "New Version v.$new_version"
         fi
     fi
 }
 
 check_depedency() {
     opw_version=`cat /etc/os-release | grep VERSION_ID | cut -d\" -f 2`
-    echo "[ `date +%T` ] - Check Depedencies : $opw_version"
+    logs "- Check Depedencies : $opw_version"
     if [[ $opw_version == 18.* ]]; then
         req=(curl php7 php7-cgi iptables kmod-tun)
         list=`opkg list-installed | grep -E "curl|php7|iptables|kmod-tun" | awk '{ print $1 }'`
@@ -52,7 +61,7 @@ check_depedency() {
             for lst_pkg in $list; do
                 stat=0
                 if [ ${req_pkg} == $lst_pkg ] ; then
-                    echo "[ `date +%T` ] - $req_pkg Installed"
+                    logs "- $req_pkg Installed" 1
                     stat=0
                     break;
                 else
@@ -60,8 +69,8 @@ check_depedency() {
                 fi
             done
             if [ $stat = 1 ] ; then
-                echo "[ `date +%T` ] - Package $req_pkg " >> $log
-                echo "[ `date +%T` ] - Installing $req_pkg " >> $log
+                logs "- Package $req_pkg " 1
+                logs "- Installing $req_pkg "
                 opkg install $req_pkg
             fi
         done
@@ -72,7 +81,7 @@ check_depedency() {
             for lst_pkg in $list; do
                 stat=0
                 if [ ${req_pkg} == $lst_pkg ] ; then
-                    echo "[ `date +%T` ] - $req_pkg Installed"
+                    logs "- $req_pkg Installed" 1
                     stat=0
                     break;
                 else
@@ -80,8 +89,8 @@ check_depedency() {
                 fi
             done
             if [ $stat = 1 ] ; then
-                echo "[ `date +%T` ] - Package $req_pkg " >> $log
-                echo "[ `date +%T` ] - Installing $req_pkg " >> $log
+                logs "- Package $req_pkg " 1
+                logs "- Installing $req_pkg "
                 opkg install $req_pkg
             fi
         done
@@ -92,7 +101,7 @@ check_depedency() {
             for lst_pkg in $list; do
                 stat=0
                 if [ ${req_pkg} == $lst_pkg ] ; then
-                    echo "[ `date +%T` ] - $req_pkg Installed"
+                    logs "- $req_pkg Installed" 1
                     stat=0
                     break;
                 else
@@ -100,8 +109,8 @@ check_depedency() {
                 fi
             done
             if [ $stat = 1 ] ; then
-                echo "[ `date +%T` ] - Package $req_pkg " >> $log
-                echo "[ `date +%T` ] - Installing $req_pkg " >> $log
+                logs "- Package $req_pkg " 1
+                logs "- Installing $req_pkg "
                 opkg install $req_pkg
             fi
         done
@@ -112,7 +121,7 @@ check_depedency() {
             for lst_pkg in $list; do
                 stat=0
                 if [ ${req_pkg} == $lst_pkg ] ; then
-                    echo "[ `date +%T` ] - $req_pkg Installed"
+                    logs "- $req_pkg Installed" 1
                     stat=0
                     break;
                 else
@@ -120,8 +129,8 @@ check_depedency() {
                 fi
             done
             if [ $stat = 1 ] ; then
-                echo "[ `date +%T` ] - Package $req_pkg " >> $log
-                echo "[ `date +%T` ] - Installing $req_pkg " >> $log
+                logs "- Package $req_pkg " 1
+                logs "- Installing $req_pkg "
                 opkg install $req_pkg
             fi
         done
@@ -150,54 +159,52 @@ files_check() {
     esac
     
     if [ $arch == "0" ] ; then
-        echo "[ `date +%T` ] - ERROR!!! Arch not supported"
+        logs "- ERROR!!! Arch not supported"
     else
         if [ -f ${neko_bin} ]; then
-            echo "[ `date +%T` ] - Mihomo OK"
+            logs "- Mihomo OK" 1
         else
-            echo "[ `date +%T` ] - Downloading Mihomo Binary - $arch"
-            echo "[ `date +%T` ] - Downloading Mihomo Binary - $arch" >> $log
+            logs "- Downloading Mihomo Binary - $arch"
             wget -q -O ${neko_dir}/core/mihomo.gz ${url_core}/mihomo-linux-${arch}-${core_ver}.gz
             gzip -d ${neko_dir}/core/mihomo.gz
         fi
 
         if [ -f ${geoip_path} ]; then
-            echo "[ `date +%T` ] - GeoIP OK"
+            logs "- GeoIP OK" 1
         else
-            echo "[ `date +%T` ] - Downloading GeoIP"
-            echo "[ `date +%T` ] - Downloading GeoIP" >> $log
+            logs "- Downloading GeoIP"
             wget -q -O ${geoip_path} ${url_geo}/geoip.metadb
         fi
 
         if [ -f ${geosite_path} ]; then
-            echo "[ `date +%T` ] - GeoSite OK"
+            logs "- GeoSite OK" 1
         else
-            echo "[ `date +%T` ] - Downloading GeoSite"
-            echo "[ `date +%T` ] - Downloading GeoSite" >> $log
+            logs "- Downloading GeoSite"
             wget -q -O ${neko_dir} ${url_geo}/geosite.db
         fi
     fi
-    chmod +x ${neko_dir}/core/*
 }
 
 neko_start(){
+    chmod +x ${neko_dir}/core/*
     neko_ver
-    echo "[ `date +%T` ] Starting Neko v.$neko_version"
-    echo "[ `date +%T` ] Starting Neko v.$neko_version" > $log
-    echo "[ `date +%T` ] - Checking Package..." >> $log
-    check_depedency
-    files_check
-    echo "[ `date +%T` ] - Checking Package Done." >> $log
+    logs "Starting Neko v.$neko_version" 2
+    if [ -f "/tmp/neko/neko.bak" ]; then
+        rm -r /tmp/neko/neko.bak
+    else
+        logs "- Checking Package..."
+        check_depedency
+        files_check
+        logs "- Checking Package Done."
+    fi
     if [ -f $neko_pid_path ] ; then
-        echo "[ `date +%T` ] - Neko is Running. Killing Neko PID : `cat $neko_pid_path`"
-        echo "[ `date +%T` ] - Neko is Running. Killing Neko PID : `cat $neko_pid_path`" >> $log
+        logs "- Neko is Running. Killing Neko PID : `cat $neko_pid_path`"
         $tun_bin -k >> $log
         kill `cat $neko_pid_path`
         uci set neko.cfg.enabled='0'
         uci commit neko
         rm $neko_pid_path
-        echo "[ `date +%T` ] - Retry Starting Neko..."
-        echo "[ `date +%T` ] - Retry Starting Neko..." >> $log
+        logs "- Retry Starting Neko..."
     fi
     if [ -f $neko_bin ] ; then
         rpid=`pgrep "mihomo|reload"`
@@ -205,109 +212,88 @@ neko_start(){
             kill $rpid 
         fi
         core_version=`$neko_bin -v | head -1 | awk '{print $1 " " $5 " " $3}'`
-        echo "[ `date +%T` ] - Core Detected : $core_version"
-        echo "[ `date +%T` ] - Core Detected : $core_version" >> $log
+        logs "- Core Detected : $core_version"
         rm $neko_log
-        echo "[ `date +%T` ] - Restarting Firewall"
-        echo "[ `date +%T` ] - Restarting Firewall" >> $log
+        logs "- Restarting Firewall"
         $firewall restart
         $neko_bin -f $neko_config -d $neko_dir >> $neko_log &
         sleep 1
         neko_pid=`pgrep mihomo`
-        echo "[ `date +%T` ] - Neko Started. PID : $neko_pid"
-        echo "[ `date +%T` ] - Neko Started. PID : $neko_pid" >> $log
-        echo "[ `date +%T` ] - Configs : $neko_config"
-        echo "[ `date +%T` ] - Configs : $neko_config" >> $log
+        logs "- Neko Started. PID : $neko_pid"
+        logs "- Configs : $neko_config"
         echo $neko_pid > $neko_pid_path
         $tun_bin -s >> $log
         uci set neko.cfg.enabled='1'
         uci commit neko
         $reload_bin "$neko_version" > /dev/null 2>&1 &
     else
-        echo "[ `date +%T` ] - Core not Detected!!!"
-        echo "[ `date +%T` ] - Core not Detected!!!" >> $log
+        logs "- Core not Detected!!!"
     fi
-    echo "[ `date +%T` ] Done"
-    echo "[ `date +%T` ] Done" >> $log
+    logs "Done"
 }
 
 php_start(){
-    echo "[ `date +%T` ] Checking PHP Server Status..."
-    echo "[ `date +%T` ] Checking PHP Server Status..." >> $log
+    logs "Checking PHP Server Status..."
     if [ -f $php_pid_path ] ; then
-        echo "[ `date +%T` ] - PHP Server is Running..."
-        echo "[ `date +%T` ] - PHP Server is Running..." >> $log
-        echo "[ `date +%T` ] - Destroy PHP Server. PID : `cat $php_pid_path`"
-        echo "[ `date +%T` ] - Destroy PHP Server. PID : `cat $php_pid_path`" >> $log
+        logs "- PHP Server is Running..."
+        logs "- Destroy PHP Server. PID : `cat $php_pid_path`"
         kill `cat $php_pid_path`
         rm $php_pid_path
     else  
-        echo "[ `date +%T` ] - PHP Server not Running..."
+        logs "- PHP Server not Running..."
     fi
     nohup $php_bin -S $php_address:$php_port -t ${neko_www} > /dev/null 2>&1 &
     php_pid=`pgrep php`
-    echo "[ `date +%T` ] - PHP Server Started. PID:$php_pid"
-    echo "[ `date +%T` ] - PHP Server Started. PID:$php_pid" >> $log
-    echo "[ `date +%T` ] - PHP Running at $php_address:$php_port"
-    echo "[ `date +%T` ] - PHP Running at $php_address:$php_port" >> $log
+    logs "- PHP Server Started. PID:$php_pid"
+    logs "- PHP Running at $php_address:$php_port"
     echo $php_pid > $php_pid_path
-    echo "[ `date +%T` ] Done"
-    echo "[ `date +%T` ] Done" >> $log
+    logs "Done"
 }
 
 neko_stop(){
-    echo "[ `date +%T` ] Disable Neko"
-    echo "[ `date +%T` ] Disable Neko" > $log
+    logs "Disable Neko" 2
     $tun_bin -k >> $log
     if [ -f $neko_pid_path ] ; then
-        echo "[ `date +%T` ] - Killing Neko PID : `cat $neko_pid_path`"
-        echo "[ `date +%T` ] - Killing Neko PID : `cat $neko_pid_path`"  >> $log
-        echo "[ `date +%T` ] - Restarting Firewall"
-        echo "[ `date +%T` ] - Restarting Firewall" >> $log
+        logs "- Killing Neko PID : `cat $neko_pid_path`"
+        logs "- Restarting Firewall"
         $firewall restart
         kill `cat $neko_pid_path`
         rm $neko_pid_path
-        echo "[ `date +%T` ] Neko has Disabled"
-        echo "[ `date +%T` ] Neko has Disabled" >> $log
-        echo "[ `date +%T` ] Neko Disabled." > $neko_log
+        rpid=`pgrep "mihomo|reload"`
+        if [[ -n $rpid ]] ; then
+            kill $rpid 
+        fi
+        logs "Neko has Disabled"
+        logs "Neko Disabled." > $neko_log
     else
-        echo "[ `date +%T` ] Neko is not Running"
-        echo "[ `date +%T` ] Neko is not Running"  >> $log
+        logs "Neko is not Running"
     fi
     uci set neko.cfg.enabled='0'
     uci commit neko
 }
 
 neko_restart(){
-    echo "[ `date +%T` ] Restarting Neko"
-    echo "[ `date +%T` ] Restarting Neko"  > $log
+    logs "Restarting Neko" 2
     neko_start
-    echo "[ `date +%T` ] Restarting Neko - Done"
-    echo "[ `date +%T` ] Restarting Neko - Done"  >> $log
+    logs "Restarting Neko - Done"
 }
 
 php_stop(){
     if [ -f $php_pid_path ] ; then
-        echo "[ `date +%T` ] - Killing PHP PID : `cat $php_pid_path`"
-        echo "[ `date +%T` ] - Killing PHP PID : `cat $php_pid_path`"  >> $log
+        logs "- Killing PHP PID : `cat $php_pid_path`"
         kill `cat $php_pid_path`
         rm $php_pid_path
-        echo "[ `date +%T` ] - Done..."
-        echo "[ `date +%T` ] - Done..." >> $log
+        logs "- Done..."
     else
-        echo "[ `date +%T` ] - PHP Server Not Running"
-        echo "[ `date +%T` ] - PHP Server Not Running"  >> $log
+        logs "- PHP Server Not Running"
     fi
 }
 
 cleanup(){
-    echo "" > $log
-    echo "[ `date +%T` ] Cleanup Temporary..."
-    echo "[ `date +%T` ] Cleanup Temporary..." >> $log
+    logs "Cleanup Temporary..." 2
     neko_stop
     php_stop
-    echo "[ `date +%T` ] Cleanup Done..."
-    echo "[ `date +%T` ] Cleanup Done..." >> $log
+    logs "Cleanup Done..."
 }
 
 while getopts ":skrpcvh" signal ; do

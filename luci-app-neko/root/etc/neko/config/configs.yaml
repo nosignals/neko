@@ -27,6 +27,7 @@ external-controller: 0.0.0.0:9090
 secret: sign
 bind-address: 0.0.0.0
 external-ui: ui
+tcp-concurrent: true
 dns:
   enable: true
   ipv6: false

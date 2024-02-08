@@ -4,6 +4,7 @@
 
 neko_dir="/etc/neko"
 neko_tmp_dir="$neko_dir/tmp"
+neko_core="$neko_dir/core"
 neko_bin="$neko_dir/core/mihomo"
 neko_www="/www/nekoclash"
 neko_config=`cat $neko_www/lib/selected_config.txt`
@@ -36,6 +37,9 @@ logs() {
         echo "[ `date +%T` ] $1" >> $log
     elif [ $2 -eq 2 ]; then
         echo "[ `date +%T` ] $1" > $log
+    elif [ $2 -eq 3 ]; then
+        echo "[ `date +%T` ] $1" >> $log
+        exit 1
     fi
 }
 
@@ -183,10 +187,14 @@ files_check() {
             wget -q -O ${neko_dir} ${url_geo}/geosite.db
         fi
     fi
+    for file in "$neko_core"/*; do
+        if [ ! -x "$file" ]; then
+            chmod +x "$file"
+        fi
+    done
 }
 
 neko_start(){
-    chmod +x ${neko_dir}/core/*
     neko_ver
     logs "Starting Neko v.$neko_version" 2
     if [ -f "/tmp/neko/neko.bak" ]; then
@@ -219,6 +227,18 @@ neko_start(){
         $neko_bin -f $neko_config -d $neko_dir >> $neko_log &
         sleep 1
         neko_pid=`pgrep mihomo`
+        if [[ -z $neko_pid ]]; then
+            for file in "$neko_core"/*; do
+                if [ ! -x "$file" ]; then
+                    logs "- `basename $file` Binary Permission is not executable, Changing..."
+                    chmod +x "$file"
+                fi
+            done
+            logs "- Retry Starting Neko"
+            $neko_bin -f $neko_config -d $neko_dir >> $neko_log &
+            sleep 1
+            neko_pid=`pgrep mihomo`
+        fi
         logs "- Neko Started. PID : $neko_pid"
         logs "- Configs : $neko_config"
         echo $neko_pid > $neko_pid_path

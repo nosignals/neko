@@ -16,12 +16,14 @@
 Input Theme
 ---
 1. Fork this Repository with All Branch
-2. Rename your CSS theme with format `[theme name]_[author].css`
+2. change ` [data-bs-theme=[theme name]_[author]] `
+   - ex ` [data-bs-theme=neko_nosignal] `
+3. Rename your CSS theme with format `[theme name]_[author].css`
    - ex ` neko_nosignal.css `
-3. Push our theme to Repository on this branch
-4. Pull request
-5. Wait to accept
-6. done
+4. Push our theme to Repository on this branch
+5. Pull request
+6. Wait to accept
+7. done
 
 Neko Theme Structure
 ---

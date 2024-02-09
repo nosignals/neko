@@ -43,14 +43,21 @@ Neko Theme Structure
 Neko Theme CSS
 ---
 - ### Background Color
-  - ` --bs-body-bg `
-```css
-[data-bs-theme=dark]{
-  color-scheme: dark;
-  --bs-body-bg: #424963;
-  ...
-}
-```
+  - you can change background to Picture with this function
+    ```css
+    body{
+      background-image: url("/nekoclash/assets/img/bg.webp");
+      background-attachment: fixed;
+      background-position: center;
+      background-size: cover;
+    }```
+  - Color setting : ` --bs-body-bg `
+   ```css
+    [data-bs-theme=dark]{
+      color-scheme: dark;
+      --bs-body-bg: #424963;
+      ...
+    }```
 - ### Secondary Background Color
   - ` --bs-secondary-bg-subtle `
   - append at ` container-bg ` class

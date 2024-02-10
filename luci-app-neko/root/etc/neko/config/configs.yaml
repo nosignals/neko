@@ -72,14 +72,6 @@ rules:
 - RULE-SET,Umum,Umum
 - MATCH,GLOBAL
 rule-providers:
-  Game:
-    type: file
-    behavior: classical
-    path: ./rule_provider/game.yaml
-  Block:
-    type: file
-    behavior: classical
-    path: ./rule_provider/blockedHost2.yaml
   Umum:
     type: file
     behavior: classical

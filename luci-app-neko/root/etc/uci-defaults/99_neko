@@ -4,6 +4,7 @@
 
 arch=`uname -m`
 neko_dir="/etc/neko"
+tmp_dir="/tmp"
 log="$neko_dir/tmp/log.txt"
     
 
@@ -83,8 +84,11 @@ if [ -f "/tmp/neko/neko.bak" ]; then
         cp -rf "/tmp/neko/core/mihomo" "/etc/neko/core/mihomo"
     else
         echo "mihomo Not Detected, Downloading"
-        wget -q --no-check-certificate -O ${neko_dir}/core/mihomo.gz ${url_core}/mihomo-linux-${arch}-${core_ver}.gz
-        gzip -d ${neko_dir}/core/mihomo.gz
+        mkdir ${tmp_dir}/neko
+        wget -q --no-check-certificate -O ${tmp_dir}/neko/mihomo.gz ${url_core}/mihomo-linux-${arch}-${core_ver}.gz
+        gzip -d ${tmp_dir}/neko/mihomo.gz
+        cp -rf ${tmp_dir}/neko/mihomo ${neko_dir}/core/mihomo
+        rm -rf ${tmp_dir}/neko/mihomo
     fi
     chmod 0755 /etc/neko/core/mihomo
 
@@ -114,6 +118,10 @@ if [ -f "/tmp/neko/neko.bak" ]; then
 else
     echo "[ `date +%T` ] - Old Files Not Detected, Checking Files"
     files_check
+fi
+
+if [ $arch == "mips_24" ]; then
+    sed -i "s/#wget/wget/g" /etc/neko/core/neko
 fi
 
 uci set neko.cfg.enabled='0'

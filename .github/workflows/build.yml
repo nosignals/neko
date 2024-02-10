@@ -9,7 +9,7 @@ on:
       version:
         description: 'Neko version'
         required: true
-        default: '1.0-beta'
+        default: '1.1.11-beta'
         type: string
       changelog:
         description: 'Changelog'
@@ -42,7 +42,7 @@ jobs:
         run: |
               echo ""
               git clone -b neko-theme https://github.com/nosignals/neko
-              cp ./neko/theme/theme/* ./luci-app-neko/htdocs/nekoclash/assets/theme/
+              cp ./neko/theme/* ./luci-app-neko/htdocs/nekoclash/assets/theme/
               cp ./neko/img/* ./luci-app-neko/htdocs/nekoclash/assets/img/
         
       - name: Preparing Neko

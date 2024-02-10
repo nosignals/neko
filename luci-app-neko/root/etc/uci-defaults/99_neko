@@ -13,6 +13,7 @@ url_geo="https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest"
 
 geoip_path="${neko_dir}/geoip.metadb"
 geosite_path="${neko_dir}/geosite.db"
+neko_bin="${neko_dir}/core/mihomo"
 
 rpid=`pgrep "neko/core"`
 if [[ -n $rpid ]] ; then

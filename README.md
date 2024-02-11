@@ -22,7 +22,7 @@ Depedencies
 
 How to Install
 ---
-1. Download tar.gz files on Release, [here](https://github.com/nosignals/neko/releases)
+1. Download tar.gz files on Release, [here](https://github.com/nosignals/neko/releases/tag/1.0-0-beta_linux-generic)
 2. Extract tar.gz Files & Go to Neko Folder ` tar xzvf neko_xxx.tar.gz `
 3. Open Terminal at Neko Files
 4. Install Depedencies ` sudo apt -y install php php-cli `

@@ -170,6 +170,8 @@ files_check() {
     else
         if [ -f ${neko_bin} ]; then
             logs "- Mihomo OK" 1
+            core_version=`$neko_bin -v | head -1 | awk '{print $1 " " $5 " " $3}'`
+            logs "- Core Detected : $core_version"
         else
             logs "- Downloading Mihomo Binary - $arch"
             wget -q --no-check-certificate -O ${neko_dir}/core/mihomo.gz ${url_core}/mihomo-linux-${arch}-${core_ver}.gz
@@ -227,8 +229,6 @@ neko_start(){
         if [[ -n $rpid ]] ; then
             kill $rpid 
         fi
-        core_version=`$neko_bin -v | head -1 | awk '{print $1 " " $5 " " $3}'`
-        logs "- Core Detected : $core_version"
         rm $neko_log
         logs "- Restarting Firewall"
         $firewall restart

@@ -57,7 +57,7 @@ stop_tun() {
 }
 start_tun_fw4() {
     echo "[ `date +%T` ] - Starting nftables"
-    handles=`nft -a list chain inet fw4 forward |grep -E "neko|meta|Meta" |awk -F '# handle ' '{print$2}'`
+    handles=`nft -a list chain inet fw4 forward |grep -E "oifname.*${tun_device}" |awk -F '# handle ' '{print$2}'`
     for handle in $handles; do
         nft delete rule inet fw4 forward handle ${handle}
     done
@@ -66,7 +66,7 @@ start_tun_fw4() {
 }
 stop_tun_fw4() {
     echo "[ `date +%T` ] - Cleaning nftables Route"
-    handles=`nft -a list chain inet fw4 forward |grep -E "neko|meta|Meta" |awk -F '# handle ' '{print$2}'`
+    handles=`nft -a list chain inet fw4 forward |grep -E "oifname.*${tun_device}" |awk -F '# handle ' '{print$2}'`
     for handle in $handles; do
         nft delete rule inet fw4 forward handle ${handle}
     done

@@ -253,6 +253,7 @@ neko_start(){
         $tun_bin -s >> $log
         uci set neko.cfg.enabled='1'
         uci commit neko
+        service neko enable
         $reload_bin "$neko_version" > /dev/null 2>&1 &
     else
         logs "- Core not Detected!!!"
@@ -298,6 +299,7 @@ neko_stop(){
     fi
     uci set neko.cfg.enabled='0'
     uci commit neko
+    service neko disable
 }
 
 neko_restart(){

@@ -59,16 +59,19 @@ start_tun_fw4() {
     echo "[ `date +%T` ] - Starting nftables"
     handles=`nft -a list chain inet fw4 forward |grep -E "oifname.*${tun_device}" |awk -F '# handle ' '{print$2}'`
     for handle in $handles; do
-        nft delete rule inet fw4 forward handle ${handle}
+        $nft delete rule inet fw4 forward handle ${handle}
     done
-    $nft insert rule inet fw4 forward position 0 meta l4proto { tcp, udp } oifname ${tun_device} counter accept
-    
+    # $nft insert rule inet fw4 forward position 0 meta l4proto { tcp, udp } oifname ${tun_device} counter accept
+    $nft insert rule inet fw4 forward position 0 meta l4proto { tcp, udp } oifname ${tun_device} counter accept comment \"Neko TUN Forward\"
+    $nft insert rule inet fw4 forward position 0 meta l4proto { tcp, udp } iifname ${tun_device} counter accept comment \"Neko TUN Forward\"
+    $nft insert rule inet fw4 input position 0 meta l4proto { tcp, udp } iifname ${tun_device} counter accept comment \"Neko TUN Input\"
+    $nft insert rule inet fw4 srcnat position 0 meta nfproto { ipv4 } oifname ${tun_device} counter return comment \"Neko TUN Postrouting\"
 }
 stop_tun_fw4() {
     echo "[ `date +%T` ] - Cleaning nftables Route"
     handles=`nft -a list chain inet fw4 forward |grep -E "oifname.*${tun_device}" |awk -F '# handle ' '{print$2}'`
     for handle in $handles; do
-        nft delete rule inet fw4 forward handle ${handle}
+        $nft delete rule inet fw4 forward handle ${handle}
     done
 }
 while getopts ":sk" signal ; do

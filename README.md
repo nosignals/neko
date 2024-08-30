@@ -15,7 +15,7 @@
 
 Supported Devices
 ---
-- OpenWrt - [luci-app-neko](https://github.com/nosignals/neko/tree/luci-app-neko)
+- OpenWrt - [luci-app-neko](https://github.com/nosignals/neko/tree/luci-app-neko) - Deprecated, rebase to new repository [openwrt-neko](https://github.com/nosignals/openwrt-neko)
 - Linux Generic - [linux-generic](https://github.com/nosignals/neko/tree/linux-generic)
 - Magisk Module - [neko-for-magisk](https://github.com/nosignals/neko/tree/neko-for-magisk) (soon)
 
